@@ -16,6 +16,9 @@ const penderita_model_1 = __importDefault(require("../models/penderita.model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt_utils_1 = require("../utils/jwt.utils");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const custom_environment_variables_1 = __importDefault(require("../../config/custom-environment-variables"));
+// import DeviceFamilyDetail from '../models/detailKeluarga.model';
+// import DeviceFamily from '../models/deviceFamily.model';
 const keluarga_model_1 = __importDefault(require("../models/keluarga.model"));
 const { Op } = require('sequelize');
 class AuthService {
@@ -120,7 +123,7 @@ class AuthService {
     refreshAccessToken(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const payload = jsonwebtoken_1.default.verify(refreshToken, Buffer.from("refreshTokenPublicKey", 'base64').toString('ascii'));
+                const payload = jsonwebtoken_1.default.verify(refreshToken, Buffer.from(custom_environment_variables_1.default.refreshTokenPublicKey, 'base64').toString('ascii'));
                 const newAccessToken = (0, jwt_utils_1.signJwt)({ id: payload.id, username: payload.username }, 'accessTokenPrivateKey', { expiresIn: '1h' });
                 return newAccessToken;
             }

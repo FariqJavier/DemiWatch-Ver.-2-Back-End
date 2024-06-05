@@ -1,11 +1,7 @@
 import Penderita from '../models/penderita.model';
-import PatientFamily from '../models/keluarga.model';
 import bcrypt from 'bcrypt'
 import { signJwt } from '../utils/jwt.utils';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../../config/custom-environment-variables'
-// import DeviceFamilyDetail from '../models/detailKeluarga.model';
-// import DeviceFamily from '../models/deviceFamily.model';
 import Keluarga from '../models/keluarga.model';
 
 const { Op } = require('sequelize');
@@ -124,7 +120,7 @@ class AuthService {
 
   async refreshAccessToken(refreshToken: string) {
     try {
-      const payload = jwt.verify(refreshToken, Buffer.from(config.refreshTokenPublicKey, 'base64').toString('ascii')) as JwtPayload;
+      const payload = jwt.verify(refreshToken, Buffer.from("refreshTokenPublicKey", 'base64').toString('ascii')) as JwtPayload;
       const newAccessToken = signJwt({ id: payload.id, username: payload.username }, 'accessTokenPrivateKey', { expiresIn: '1h' });
       return newAccessToken;
     } catch (error: any) {
