@@ -3,19 +3,17 @@ import responseTime from "response-time";
 import connect from "./utils/connect";
 import logger from "./utils/logger";
 import routes from "./routes";
+import config from "config"
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
-const defaultConfig = require("./config/default.json");
-let environmentConfig = {};
-
+// Ensure config is loaded with the correct environment (optional)
 if (process.env.NODE_ENV) {
-  environmentConfig = require(`./config/${process.env.NODE_ENV}.json`);
+  config.util.getEnv(process.env.NODE_ENV);
 }
 
-const finalConfig = Object.assign({}, defaultConfig, environmentConfig);
-
-const port = finalConfig.get("port");
+// Access environment-specific values (example)
+const port = config.get("port");
 
 const app = express();
 
