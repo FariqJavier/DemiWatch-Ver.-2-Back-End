@@ -17,14 +17,14 @@ const response_time_1 = __importDefault(require("response-time"));
 const connect_1 = __importDefault(require("./utils/connect"));
 const logger_1 = __importDefault(require("./utils/logger"));
 const routes_1 = __importDefault(require("./routes"));
+const config_1 = __importDefault(require("config"));
 const metrics_1 = require("./utils/metrics");
-const defaultConfig = require("./config/default.json");
-let environmentConfig = {};
+// Ensure config is loaded with the correct environment (optional)
 if (process.env.NODE_ENV) {
-    environmentConfig = require(`./config/${process.env.NODE_ENV}.json`);
+    config_1.default.util.getEnv(process.env.NODE_ENV);
 }
-const finalConfig = Object.assign({}, defaultConfig, environmentConfig);
-const port = finalConfig.get("port");
+// Access environment-specific values (example)
+const port = config_1.default.get("port");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 // app.use(deserializeUser);
