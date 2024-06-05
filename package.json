@@ -11,7 +11,7 @@
   "dependencies": {
     "@types/sequelize": "^4.28.20",
     "bcrypt": "^5.0.1",
-    "config": "^3.3.6",
+    "config": "^3.3.11",
     "cors": "^2.8.5",
     "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",

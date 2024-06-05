@@ -1,7 +1,4 @@
 import express, { Request, Response } from "express";
-import dotenv from "dotenv";
-dotenv.config();
-import config from "config";
 import responseTime from "response-time";
 import connect from "./utils/connect";
 import logger from "./utils/logger";
@@ -9,7 +6,16 @@ import routes from "./routes";
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
-const port = process.env.PORT || config.get<number>("port");
+const defaultConfig = require("./config/default.json");
+let environmentConfig = {};
+
+if (process.env.NODE_ENV) {
+  environmentConfig = require(`./config/${process.env.NODE_ENV}.json`);
+}
+
+const finalConfig = Object.assign({}, defaultConfig, environmentConfig);
+
+const port = finalConfig.get("port");
 
 const app = express();
 
