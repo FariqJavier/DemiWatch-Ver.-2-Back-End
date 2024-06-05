@@ -6,7 +6,6 @@ import responseTime from "response-time";
 import connect from "./utils/connect";
 import logger from "./utils/logger";
 import routes from "./routes";
-import deserializeUser from "./middleware/deserializeUser";
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
