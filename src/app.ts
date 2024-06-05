@@ -43,5 +43,3 @@ app.listen(port, async () => {
 
   // swaggerDocs(app, port);
 });
-
-module.exports = app;
