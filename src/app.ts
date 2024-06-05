@@ -10,7 +10,7 @@ import deserializeUser from "./middleware/deserializeUser";
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
-const port = config.get<number>("port");
+const port = process.env.PORT || config.get<number>("port");
 
 const app = express();
 
