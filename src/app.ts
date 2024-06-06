@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import responseTime from "response-time";
+import dotenv from "dotenv";
+dotenv.config();
 import connect from "./utils/connect";
 import logger from "./utils/logger";
 import routes from "./routes";
@@ -7,13 +9,8 @@ import config from "config"
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
-// Ensure config is loaded with the correct environment (optional)
-if (process.env.NODE_ENV) {
-  config.util.getEnv(process.env.NODE_ENV);
-}
-
 // Access environment-specific values (example)
-const port = config.get("port");
+const port = process.env.PORT || config.get("port");
 
 const app = express();
 
