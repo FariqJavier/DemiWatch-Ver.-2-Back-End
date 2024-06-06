@@ -9,6 +9,9 @@ import config from "config"
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
+// Ensure NODE_CONFIG_DIR is set or default to './config'
+const configDir = process.env.NODE_CONFIG_DIR || './config';
+
 // Access environment-specific values (example)
 const port = process.env.PORT || config.get("port");
 

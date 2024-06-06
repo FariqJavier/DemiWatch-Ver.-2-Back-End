@@ -14,17 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const response_time_1 = __importDefault(require("response-time"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const connect_1 = __importDefault(require("./utils/connect"));
 const logger_1 = __importDefault(require("./utils/logger"));
 const routes_1 = __importDefault(require("./routes"));
 const config_1 = __importDefault(require("config"));
 const metrics_1 = require("./utils/metrics");
-// Ensure config is loaded with the correct environment (optional)
-if (process.env.NODE_ENV) {
-    config_1.default.util.getEnv(process.env.NODE_ENV);
-}
+// Ensure NODE_CONFIG_DIR is set or default to './config'
+const configDir = process.env.NODE_CONFIG_DIR || './config';
 // Access environment-specific values (example)
-const port = config_1.default.get("port");
+const port = process.env.PORT || config_1.default.get("port");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 // app.use(deserializeUser);
