@@ -26,15 +26,9 @@ class AuthService {
           id: penderita.penderita_id, 
           username: penderita.username,
         };
-        // Fetch the access token private key
-        const accessTokenPrivateKey = config.get('accessTokenPrivateKey');
 
-        // Ensure the key is defined
-        if (!accessTokenPrivateKey) {
-          throw new Error('accessTokenPrivateKey is not defined in the configuration');
-        }
-        const accessToken = signJwt(payload, 'accessTokenPrivateKey', { expiresIn: '1h' });
-        const refreshToken = signJwt(payload, 'refreshTokenPrivateKey', { expiresIn: '7d' });
+        const accessToken = signJwt(payload, "ACCESS_TOKEN_PRIVATE_KEY", { expiresIn: '1h' });
+        const refreshToken = signJwt(payload, "REFRESH_TOKEN_PRIVATE_KEY", { expiresIn: '7d' });
 
         await penderita.update({ refreshToken });
 
@@ -66,15 +60,9 @@ class AuthService {
             id: keluarga.keluarga_id, 
             username: keluarga.username,
           };
-          // Fetch the access token private key
-          const accessTokenPrivateKey = config.get('accessTokenPrivateKey');
 
-          // Ensure the key is defined
-          if (!accessTokenPrivateKey) {
-            throw new Error('accessTokenPrivateKey is not defined in the configuration');
-          }
-          const accessToken = signJwt(payload, 'accessTokenPrivateKey', { expiresIn: '1h' });
-          const refreshToken = signJwt(payload, 'refreshTokenPrivateKey', { expiresIn: '7d' });
+          const accessToken = signJwt(payload, "ACCESS_TOKEN_PRIVATE_KEY", { expiresIn: '1h' });
+          const refreshToken = signJwt(payload, "REFRESH_TOKEN_PRIVATE_KEY", { expiresIn: '7d' });
 
           await keluarga.update({ refreshToken });
 
@@ -136,15 +124,12 @@ class AuthService {
 
   async refreshAccessToken(refreshToken: string) {
     try {
-      // Fetch the access token private key
-      const refreshTokenPublicKey = config.get('refreshTokenPublicKey');
-
-      // Ensure the key is defined
-      if (!refreshTokenPublicKey) {
-        throw new Error('refreshTokenPublicKey is not defined in the configuration');
+      const key = process.env["REFRESH_TOKEN_PUBLIC_KEY"];
+      if (!key) {
+        throw new Error(`Environment variable "REFRESH_TOKEN_PUBLIC_KEY" is not defined`);
       }
-      const payload = jwt.verify(refreshToken, Buffer.from("refreshTokenPublicKey", 'base64').toString('ascii')) as JwtPayload;
-      const newAccessToken = signJwt({ id: payload.id, username: payload.username }, 'accessTokenPrivateKey', { expiresIn: '1h' });
+      const payload = jwt.verify(refreshToken, Buffer.from(key, 'base64').toString('ascii')) as JwtPayload;
+      const newAccessToken = signJwt({ id: payload.id, username: payload.username }, "ACCESS_TOKEN_PRIVATE_KEY", { expiresIn: '1h' });
       return newAccessToken;
     } catch (error: any) {
       return new Error(`Failed to refresh Access Token: ${error}`);

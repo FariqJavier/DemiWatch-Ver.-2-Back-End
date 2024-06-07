@@ -3,13 +3,33 @@ import config from "config";
 import dotenv from "dotenv";
 dotenv.config();
 
+// export function signJwt(
+//   object: Object,
+//   keyName: "accessTokenPrivateKey" | "refreshTokenPrivateKey",
+//   options?: jwt.SignOptions | undefined
+// ) {
+//   const signingKey = Buffer.from(
+//     config.get<string>(keyName),
+//     "base64"
+//   ).toString("ascii");
+
+//   return jwt.sign(object, signingKey, {
+//     ...(options && options),
+//     algorithm: "RS256",
+//   });
+// }
+
 export function signJwt(
   object: Object,
-  keyName: "accessTokenPrivateKey" | "refreshTokenPrivateKey",
+  keyName: "ACCESS_TOKEN_PRIVATE_KEY" | "REFRESH_TOKEN_PRIVATE_KEY",
   options?: jwt.SignOptions | undefined
 ) {
+  const key = process.env[keyName];
+  if (!key) {
+    throw new Error(`Environment variable ${keyName} is not defined`);
+  }
   const signingKey = Buffer.from(
-    config.get<string>(keyName),
+    key,
     "base64"
   ).toString("ascii");
 
@@ -21,9 +41,13 @@ export function signJwt(
 
 export function verifyJwt(
   token: string,
-  keyName: "accessTokenPublicKey" | "refreshTokenPublicKey"
+  keyName: "ACCESS_TOKEN_PUBLIC_KEY" | "REFRESH_TOKEN_PUBLIC_KEY"
 ) {
-  const publicKey = Buffer.from(config.get<string>(keyName), "base64").toString(
+  const key = process.env[keyName];
+  if (!key) {
+    throw new Error(`Environment variable ${keyName} is not defined`);
+  }
+  const publicKey = Buffer.from(key, "base64").toString(
     "ascii"
   );
 
