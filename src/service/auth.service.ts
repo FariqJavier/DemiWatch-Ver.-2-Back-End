@@ -3,7 +3,9 @@ import bcrypt from 'bcrypt'
 import { signJwt } from '../utils/jwt.utils';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import Keluarga from '../models/keluarga.model';
-
+import config from 'config';
+import dotenv from "dotenv";
+dotenv.config();
 const { Op } = require('sequelize');
 
 class AuthService {
@@ -24,6 +26,13 @@ class AuthService {
           id: penderita.penderita_id, 
           username: penderita.username,
         };
+        // Fetch the access token private key
+        const accessTokenPrivateKey = config.get('accessTokenPrivateKey');
+
+        // Ensure the key is defined
+        if (!accessTokenPrivateKey) {
+          throw new Error('accessTokenPrivateKey is not defined in the configuration');
+        }
         const accessToken = signJwt(payload, 'accessTokenPrivateKey', { expiresIn: '1h' });
         const refreshToken = signJwt(payload, 'refreshTokenPrivateKey', { expiresIn: '7d' });
 
@@ -57,6 +66,13 @@ class AuthService {
             id: keluarga.keluarga_id, 
             username: keluarga.username,
           };
+          // Fetch the access token private key
+          const accessTokenPrivateKey = config.get('accessTokenPrivateKey');
+
+          // Ensure the key is defined
+          if (!accessTokenPrivateKey) {
+            throw new Error('accessTokenPrivateKey is not defined in the configuration');
+          }
           const accessToken = signJwt(payload, 'accessTokenPrivateKey', { expiresIn: '1h' });
           const refreshToken = signJwt(payload, 'refreshTokenPrivateKey', { expiresIn: '7d' });
 
@@ -120,6 +136,13 @@ class AuthService {
 
   async refreshAccessToken(refreshToken: string) {
     try {
+      // Fetch the access token private key
+      const refreshTokenPublicKey = config.get('refreshTokenPublicKey');
+
+      // Ensure the key is defined
+      if (!refreshTokenPublicKey) {
+        throw new Error('refreshTokenPublicKey is not defined in the configuration');
+      }
       const payload = jwt.verify(refreshToken, Buffer.from("refreshTokenPublicKey", 'base64').toString('ascii')) as JwtPayload;
       const newAccessToken = signJwt({ id: payload.id, username: payload.username }, 'accessTokenPrivateKey', { expiresIn: '1h' });
       return newAccessToken;

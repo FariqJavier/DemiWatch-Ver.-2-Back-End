@@ -1,8 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyJwt } from '../utils/jwt.utils';
+import dotenv from "dotenv";
+dotenv.config();
+import config from 'config';
 
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+
+  // Fetch the access token private key
+const accessTokenPublicKey = config.get('accessTokenPublicKey');
+
+// Ensure the key is defined
+if (!accessTokenPublicKey) {
+  throw new Error('accessTokenPublicKey is not defined in the configuration');
+}
 
   if (authHeader) {
     const token = authHeader.split(' ')[1];
