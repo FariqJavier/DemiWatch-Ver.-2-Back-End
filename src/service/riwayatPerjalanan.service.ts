@@ -211,9 +211,9 @@ class RiwayatPerjalananService {
   }
 
   async updateLokasiTujuanByLokasiTujuanId(username: string, riwayat_perjalanan_id: string, data: {
-    alamat_tujuan: string;
-    longitude_tujuan: Float32Array;
-    latitude_tujuan: Float32Array;
+    alamat_tujuan: string | null;
+    longitude_tujuan: Float32Array | null;
+    latitude_tujuan: Float32Array | null;
   }): Promise<[number, LokasiTujuan[]]> {
     try {
       const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
@@ -224,7 +224,11 @@ class RiwayatPerjalananService {
       if (!riwayatPerjalanan) {
         throw new Error('Riwayat Perjalanan not found');
       }
-      const [updatedRows, updatedLokasi] = await LokasiTujuan.update(data, {
+      // Filter out null properties
+      const filteredData = Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v !== null)
+      );
+      const [updatedRows, updatedLokasi] = await LokasiTujuan.update(filteredData, {
         where: { 
           riwayat_perjalanan_id: riwayat_perjalanan_id
          },

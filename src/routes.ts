@@ -12,10 +12,10 @@ import KeluargaController from "./controller/keluarga.controller";
 import HubunganPenderitaService from "./service/hubunganPenderita.service";
 import RiwayatPerjalananService from "./service/riwayatPerjalanan.service";
 import RiwayatPerjalananController from "./controller/riwayatPerjalanan.controller";
-
-// const demiWatchController = new DemiWatchController(new DemiWatchService(), new LogService());
-// const deviceController = new DeviceController(new DeviceService(), new LogService());
-
+import AlamatService from "./service/alamat.service";
+import AlamatController from "./controller/alamat.controller";
+import RiwayatDetakJantungService from "./service/riwayatDetakJantung.service";
+import RiwayatDetakJantungController from "./controller/riwayatDetakJantung.controller";
 
 const refreshTokenController = new RefreshTokenController(
   new AuthService()
@@ -71,6 +71,40 @@ const riwayatPerjalananController = new RiwayatPerjalananController(
     )
   ),
   new RiwayatPerjalananService(
+    new PenderitaService()
+  )
+)
+
+const alamatController = new AlamatController(
+  new PenderitaService(),
+  new HubunganPenderitaService(
+    new KeluargaService(),
+    new PenderitaService(),
+    new DetailPenderitaService(
+      new PenderitaService(),
+    ),
+    new DetailKeluargaService(
+      new KeluargaService(),
+    )
+  ),
+  new AlamatService(
+    new PenderitaService()
+  )
+)
+
+const riwayatDetakJantungController = new RiwayatDetakJantungController(
+  new PenderitaService(),
+  new HubunganPenderitaService(
+    new KeluargaService(),
+    new PenderitaService(),
+    new DetailPenderitaService(
+      new PenderitaService(),
+    ),
+    new DetailKeluargaService(
+      new KeluargaService(),
+    )
+  ),
+  new RiwayatDetakJantungService(
     new PenderitaService()
   )
 )
@@ -172,12 +206,12 @@ function routes(app: Express){
   
   // UNAUTHORIZED ENDPOINT
   // Update New Lokasi Terakhir Penderita
-  app.post('/api/penderita/:penderita_username/:riwayat_perjalanan_id', async (req: Request, res: Response) => {
+  app.post('/api/penderita/:penderita_username/riwayatperjalanan/:riwayat_perjalanan_id', async (req: Request, res: Response) => {
     try { await riwayatPerjalananController.updateLokasiTerakhirByRiwayatPerjalanan(req, res) } catch (error: any) { }
   });
 
   // Get Penderita 5 Last Location
-  app.get('/api/penderita/:penderita_username/lastlocation', async (req: Request, res: Response) => {
+  app.get('/api/penderita/:penderita_username/riwayatperjalanan/lastlocation', async (req: Request, res: Response) => {
     try { await riwayatPerjalananController.getLimaLokasiTerakhirByPenderitaUsername(req, res) } catch (error: any) { }
   });
 
@@ -187,7 +221,7 @@ function routes(app: Express){
   });
 
   // Get Specific Riwayat Perjalanan Penderita Through Keluarga Account
-  app.get('/api/keluarga/:keluarga_username/:penderita_username/:riwayat_perjalanan_id', async (req: Request, res: Response) => {
+  app.get('/api/keluarga/:keluarga_username/:penderita_username/riwayatperjalanan/:riwayat_perjalanan_id', async (req: Request, res: Response) => {
     try { await riwayatPerjalananController.getSpecificRiwayatPerjalananPenderita(req, res) } catch (error: any) { }
   });
 
@@ -198,6 +232,58 @@ function routes(app: Express){
   });
 
   /* END FITUR LOKASI  ##################################################################################### */
+
+  /* START FITUR ALAMAT TERSIMPAN  ######################################################################### */
+
+  // UNAUTHORIZED ENDPOINT
+  // Get All Alamat Tersimpan Penderita through Keluarga Account
+  app.get('/api/keluarga/:keluarga_username/:penderita_username/alamat', async (req: Request, res: Response) => {
+    try { await alamatController.getAllAlamatTersimpanByPenderitaUsername(req, res) } catch (error: any) { }
+  });
+
+  // Get Specific Penderita Alamat Tersimpan Through Keluarga Account
+  app.get('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', async (req: Request, res: Response) => {
+    try { await alamatController.getSpecificAlamatByAlamatId(req, res) } catch (error: any) { }
+  });
+
+  // AUTHORIZED ENDPOINT
+  // Create New Penderita Alamat Tersimpan through Keluarga Account 
+  app.post('/api/keluarga/:keluarga_username/:penderita_username/alamat', authenticateJWT, async (req: Request, res: Response) => {
+    try { await alamatController.createNewAlamatTersimpan(req, res) } catch (error: any) { }
+  });
+
+  // Update Penderita Alamat Tersimpan through Keluarga Account 
+  app.put('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', authenticateJWT, async (req: Request, res: Response) => {
+    try { await alamatController.updateSpecificAlamatByAlamatId(req, res) } catch (error: any) { }
+  });
+
+  // Update Penderita Alamat Tersimpan through Keluarga Account 
+  app.delete('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', authenticateJWT, async (req: Request, res: Response) => {
+    try { await alamatController.deleteAlamatTersimpan(req, res) } catch (error: any) { }
+  });
+
+  /* END FITUR ALAMAT TERSIMPAN  ########################################################################### */
+
+  /* START FITUR RIWAYAT DETAK JANTUNG  #################################################################### */
+
+  // UNAUTHORIZED ENDPOINT
+  // Get Detak Jantung Terakhir Penderita Through Keluarga Account
+  app.get('/api/keluarga/:keluarga_username/:penderita_username/detakjantung/terakhir', async (req: Request, res: Response) => {
+    try { await riwayatDetakJantungController.getLastDetakJantungPenderita(req, res) } catch (error: any) { }
+  });
+
+  // Get Detak Jantung Satu Hari Terakhir Penderita Through Keluarga Account
+  app.get('/api/keluarga/:keluarga_username/:penderita_username/detakjantung/sehariterakhir', async (req: Request, res: Response) => {
+    try { await riwayatDetakJantungController.getLastDayDetakJantungPenderita(req, res) } catch (error: any) { }
+  });
+
+  // AUTHORIZED ENDPOINT
+  // Create Penderita Riwayat Detak Jantung
+  app.post('/api/penderita/:penderita_username/detakjantung', authenticateJWT, async (req: Request, res: Response) => {
+    try { await riwayatDetakJantungController.createNewRiwayatDetakJantung(req, res) } catch (error: any) { }
+  });
+
+  /* END FITUR RIWAYAT DETAK JANTUNG  ###################################################################### */
 
 }
 
