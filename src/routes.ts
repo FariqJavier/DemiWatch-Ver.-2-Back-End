@@ -16,6 +16,7 @@ import AlamatService from "./service/alamat.service";
 import AlamatController from "./controller/alamat.controller";
 import RiwayatDetakJantungService from "./service/riwayatDetakJantung.service";
 import RiwayatDetakJantungController from "./controller/riwayatDetakJantung.controller";
+import EmergensiService from "./service/emergensi.service";
 
 const refreshTokenController = new RefreshTokenController(
   new AuthService()
@@ -35,6 +36,9 @@ const penderitaController = new PenderitaController(
     new DetailKeluargaService(
       new KeluargaService(),
     )
+  ),
+  new RiwayatDetakJantungService(
+    new PenderitaService()
   ),
   new AuthService()
 );
@@ -105,6 +109,9 @@ const riwayatDetakJantungController = new RiwayatDetakJantungController(
     )
   ),
   new RiwayatDetakJantungService(
+    new PenderitaService()
+  ),
+  new EmergensiService(
     new PenderitaService()
   )
 )
@@ -267,6 +274,11 @@ function routes(app: Express){
   /* START FITUR RIWAYAT DETAK JANTUNG  #################################################################### */
 
   // UNAUTHORIZED ENDPOINT
+  // Create Penderita Detak Jantung
+  app.post('/api/penderita/:penderita_username/detakjantung', async (req: Request, res: Response) => {
+    try { await riwayatDetakJantungController.createNewDetakJantung(req, res) } catch (error: any) { }
+  });
+
   // Get Detak Jantung Terakhir Penderita Through Keluarga Account
   app.get('/api/keluarga/:keluarga_username/:penderita_username/detakjantung/terakhir', async (req: Request, res: Response) => {
     try { await riwayatDetakJantungController.getLastDetakJantungPenderita(req, res) } catch (error: any) { }
@@ -275,12 +287,6 @@ function routes(app: Express){
   // Get Detak Jantung Satu Hari Terakhir Penderita Through Keluarga Account
   app.get('/api/keluarga/:keluarga_username/:penderita_username/detakjantung/sehariterakhir', async (req: Request, res: Response) => {
     try { await riwayatDetakJantungController.getLastDayDetakJantungPenderita(req, res) } catch (error: any) { }
-  });
-
-  // AUTHORIZED ENDPOINT
-  // Create Penderita Riwayat Detak Jantung
-  app.post('/api/penderita/:penderita_username/detakjantung', authenticateJWT, async (req: Request, res: Response) => {
-    try { await riwayatDetakJantungController.createNewRiwayatDetakJantung(req, res) } catch (error: any) { }
   });
 
   /* END FITUR RIWAYAT DETAK JANTUNG  ###################################################################### */

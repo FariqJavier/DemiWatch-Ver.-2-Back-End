@@ -5,6 +5,7 @@ import logger from "../utils/logger";
 import PenderitaService from '../service/penderita.service';
 import DetailPenderitaService from '../service/detailPenderita.service';
 import HubunganPenderitaService from '../service/hubunganPenderita.service';
+import RiwayatDetakJantungService from '../service/riwayatDetakJantung.service';
 import AuthService from "../service/auth.service"
 
 async function hashPassword(password: string): Promise<string> {
@@ -19,6 +20,7 @@ class PenderitaController {
     private readonly penderitaService: PenderitaService,
     private readonly detailPenderitaService: DetailPenderitaService,
     private readonly hubunganPenderitaService: HubunganPenderitaService,
+    private readonly riwayatDetakJantungService: RiwayatDetakJantungService,
     private readonly authService: AuthService,
   ) {} // Receives service as an argument
 
@@ -27,6 +29,7 @@ class PenderitaController {
     try {
       const penderitaUUID = uuidv4();
       const detailPenderitaUUID = uuidv4();
+      const riwayatUUID = uuidv4();
       const { 
         username,
         password, 
@@ -54,11 +57,18 @@ class PenderitaController {
       });
       logger.info(`DETAIL PENDERITA created succesfully`);
 
+      const riwayat = await this.riwayatDetakJantungService.createNewRiwayatDetakJantung({
+        riwayat_detak_jantung_id: riwayatUUID,
+        penderita_id: penderita.penderita_id,
+      })
+      logger.info(`RIWAYAT DETAK JANTUNG created succesfully`);
+
       res.status(201).json({
         message: 'PENDERITA ACCOUNT created successfully',
         data: {
           penderita: penderita,
-          detailPenderita: detailPenderita
+          detailPenderita: detailPenderita,
+          riwayatDetakJantung: riwayat
         }
       })
 

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import PenderitaService from '../service/penderita.service';
 import HubunganPenderitaService from '../service/hubunganPenderita.service';
 import RiwayatDetakJantungService from '../service/riwayatDetakJantung.service';
+import EmergensiService from '../service/emergensi.service';
 
 class RiwayatDetakJantungController {
 
@@ -11,13 +12,13 @@ class RiwayatDetakJantungController {
     private readonly penderitaService: PenderitaService,
     private readonly hubunganPenderitaService: HubunganPenderitaService,
     private readonly riwayatDetakJantungService : RiwayatDetakJantungService,
+    private readonly emergencyService : EmergensiService,
   ) {} // Receives service as an argument
 
-  // AUTHORIZED ENDPOINT
-  async createNewRiwayatDetakJantung(req: Request, res: Response): Promise<void> {
-    try {
-      if ((req as any).user) {    
-        var riwayatUUID = uuidv4();
+  // UNAUTHORIZED ENDPOINT
+  async createNewDetakJantung(req: Request, res: Response): Promise<void> {
+    try {    
+        var detakJantungUUID = uuidv4();
 
         const { 
           penderita_username } = req.params;
@@ -25,27 +26,32 @@ class RiwayatDetakJantungController {
         const { 
             bpm_terakhir } = req.body;
 
-        const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(penderita_username)
+        const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(penderita_username);
         // Check if the penderita was found
         if (!penderita) {
           throw new Error('Penderita Account not found');
         }
 
-        const riwayat = await this.riwayatDetakJantungService.createNewRiwayatDetakJantung({
-          riwayat_detak_jantung_id: riwayatUUID,
-          penderita_id: penderita.penderita_id,
+        const riwayatDetakJantung = await this.riwayatDetakJantungService.getRiwayatDetakJantungByPenderitaUsername(penderita_username);
+        // Check if the riwayat detak jantung was found
+        if (!riwayatDetakJantung) {
+          throw new Error('Riwayat Detak Jantung not found');
+        }
+
+        const riwayat = await this.riwayatDetakJantungService.createNewDetakJantung({
+          detak_jantung_id: detakJantungUUID,
+          riwayat_detak_jantung_id: riwayatDetakJantung.riwayat_detak_jantung_id,
           bpm_terakhir
         })
-        logger.info(`RIWAYAT DETAK JANTUNG created succesfully`);
+        logger.info(`New DETAK JANTUNG created succesfully`);
 
         res.status(201).json({
-          message: `RIWAYAT DETAK JANTUNG for PENDERITA ${penderita_username} created successfully`,
+          message: `New DETAK JANTUNG for PENDERITA ${penderita_username} created successfully`,
           data: riwayat 
         })
-      }
     } catch (error: any) {
-      logger.error({ message: `Failed to create RIWAYAT DETAK JANTUNG for PENDERITA: ${error.message}` })
-      res.status(500).json({ message: `Failed to create RIWAYAT DETAK JANTUNG for PENDERITA: ${error.message}` });
+      logger.error({ message: `Failed to create New DETAK JANTUNG for PENDERITA: ${error.message}` })
+      res.status(500).json({ message: `Failed to create New DETAK JANTUNG for PENDERITA: ${error.message}` });
     }
   }
 

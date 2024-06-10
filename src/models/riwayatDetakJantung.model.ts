@@ -5,9 +5,7 @@ import Penderita from './penderita.model';
 class RiwayatDetakJantung extends Model {
   public riwayat_detak_jantung_id!: string;
   public penderita_id!: string;
-  public bpm_terakhir!: Int16Array;
   public status!: string;
-  public readonly timestamp!: Date;
 }
 
 RiwayatDetakJantung.init({
@@ -25,20 +23,11 @@ RiwayatDetakJantung.init({
         key: 'penderita_id'
       }
   },
-  bpm_terakhir: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   status: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'STABIL',
   },
-  timestamp: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
-  }
 }, {
   sequelize,
   tableName: 'riwayat_detak_jantung',

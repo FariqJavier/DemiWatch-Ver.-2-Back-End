@@ -1,8 +1,8 @@
 import RiwayatDetakJantung from '../models/riwayatDetakJantung.model';
+import DetakJantung from '../models/detakJantung.model';
 import PenderitaService from './penderita.service';
 import { Op } from 'sequelize';
 import moment from 'moment-timezone';
-import logger from "../utils/logger";
 
 function convertUTCTimeToTimeZone(utcTimestamp: Date, userTimeZone: string): Date {
     return moment.utc(utcTimestamp).tz(userTimeZone).toDate();
@@ -17,7 +17,6 @@ class RiwayatDetakJantungService {
   async createNewRiwayatDetakJantung(data: {
     riwayat_detak_jantung_id: string;
     penderita_id: string;
-    bpm_terakhir: Int16Array;
   }): Promise<RiwayatDetakJantung> {
     try {
       const detakJantung = await RiwayatDetakJantung.create(data);
@@ -27,15 +26,50 @@ class RiwayatDetakJantungService {
     }
   }
 
-  async getLastDetakJantungPenderita(username: string): Promise<RiwayatDetakJantung | null> {
+  async createNewDetakJantung(data: {
+    detak_jantung_id: string;
+    riwayat_detak_jantung_id: string;
+    bpm_terakhir: Int16Array
+  }): Promise<DetakJantung> {
+    try {
+      const detakJantung = await DetakJantung.create(data);
+      return detakJantung;
+    } catch (error) {
+      throw new Error(`Failed to create Detak Jantung: ${error}`);
+    }
+  }
+
+  async getRiwayatDetakJantungByPenderitaUsername(username: string): Promise<RiwayatDetakJantung | null> {
     try { 
         const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
         // Check if the penderita was found
         if (!penderita) {
           throw new Error('Penderita Account not found');
         }
-        const lastDetakJantung = await RiwayatDetakJantung.findOne({
+        const riwayatDetakJantung = await RiwayatDetakJantung.findOne({
             where: { penderita_id: penderita.penderita_id },
+        });
+        return riwayatDetakJantung
+    } catch (error) {
+      throw new Error(`Failed to get Riwayat Detak Jantung Penderita: ${error}`);
+    }
+  }
+
+  async getLastDetakJantungPenderita(username: string): Promise<DetakJantung | null> {
+    try { 
+        const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
+        // Check if the penderita was found
+        if (!penderita) {
+          throw new Error('Penderita Account not found');
+        }
+        const riwayatDetakJantung = await RiwayatDetakJantung.findOne({
+          where: { penderita_id: penderita.penderita_id }
+        })
+        if (!riwayatDetakJantung) {
+          throw new Error('Riwayat Detak Jantung not found');
+        }
+        const lastDetakJantung = await DetakJantung.findOne({
+            where: { riwayat_detak_jantung_id: riwayatDetakJantung.riwayat_detak_jantung_id },
             order: [['timestamp', 'DESC']] // Assuming 'createdAt' is the timestamp field
         });
         return lastDetakJantung
@@ -51,7 +85,12 @@ class RiwayatDetakJantungService {
         if (!penderita) {
           throw new Error('Penderita Account not found');
         }
-
+        const riwayatDetakJantung = await RiwayatDetakJantung.findOne({
+          where: { penderita_id: penderita.penderita_id }
+        })
+        if (!riwayatDetakJantung) {
+          throw new Error('Riwayat Detak Jantung not found');
+        }
         const lastDetakJantung = await this.getLastDetakJantungPenderita(username);
         // Check if lastDetakJantung exists
         if (!lastDetakJantung) {
@@ -63,9 +102,9 @@ class RiwayatDetakJantungService {
         // Calculate the start of the last day period (24 hours back from lastTimestamp)
         const startOfLastDay = moment(lastTimestamp).subtract(1, 'days').toDate();
 
-        const detakJantung = await RiwayatDetakJantung.findAll({
+        const detakJantung = await DetakJantung.findAll({
             where: {
-                penderita_id: penderita.penderita_id,
+                riwayat_detak_jantung_id: riwayatDetakJantung.riwayat_detak_jantung_id,
                 timestamp: {
                   [Op.gte]: startOfLastDay,
                   [Op.lt]: lastTimestamp,
@@ -78,10 +117,9 @@ class RiwayatDetakJantungService {
             const userTimeZone = 'Asia/Jakarta'; // Assuming you have a function to get user's time zone
             const userTimestamp = convertUTCTimeToTimeZone(detak.timestamp, userTimeZone);
             return {
+                detak_jantung_id: detak.detak_jantung_id,
                 riwayat_detak_jantung_id: detak.riwayat_detak_jantung_id,
-                penderita_id: detak.penderita_id,
                 bpm_terakhir: detak.bpm_terakhir,
-                status: detak.status,
                 timestamp: userTimestamp, // Use userTimestamp instead of timestamp
                 // _attributes: detak._attributes,
                 // dataValues: detak.dataValues,
