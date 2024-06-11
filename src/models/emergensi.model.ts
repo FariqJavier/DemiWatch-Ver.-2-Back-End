@@ -6,9 +6,9 @@ class Emergensi extends Model {
   public emergensi_id!: string;
   public penderita_id!: string;
   public bpm_sepuluh_menit_terakhir!: number;
-  public jarak_tersesat!: Float32Array;
+  public jarak_tersesat!: number;
   public emergensi_button!: boolean;
-  public nilai_accelerometer!: Float32Array;
+  public nilai_accelerometer!: number;
 }
 
 Emergensi.init({

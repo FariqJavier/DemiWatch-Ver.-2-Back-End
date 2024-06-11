@@ -219,8 +219,8 @@ function routes(app: Express){
   
   // UNAUTHORIZED ENDPOINT
   // Update New Lokasi Terakhir Penderita
-  app.post('/api/penderita/:penderita_username/riwayatperjalanan/:riwayat_perjalanan_id', async (req: Request, res: Response) => {
-    try { await riwayatPerjalananController.updateLokasiTerakhirByRiwayatPerjalanan(req, res) } catch (error: any) { }
+  app.post('/api/penderita/:penderita_username/riwayatperjalanan/lastlocation', async (req: Request, res: Response) => {
+    try { await riwayatPerjalananController.updateLokasiTerakhirByRiwayatPerjalananTerakhirOrSelesai(req, res) } catch (error: any) { }
   });
 
   // Get Penderita 5 Last Location
@@ -282,7 +282,7 @@ function routes(app: Express){
   // UNAUTHORIZED ENDPOINT
   // Create Penderita Detak Jantung
   app.post('/api/penderita/:penderita_username/detakjantung', async (req: Request, res: Response) => {
-    try { await riwayatDetakJantungController.createNewDetakJantung(req, res) } catch (error: any) { }
+    try { await riwayatDetakJantungController.createNewDetakJantungOrEmergensi(req, res) } catch (error: any) { }
   });
 
   // Get Detak Jantung Terakhir Penderita Through Keluarga Account

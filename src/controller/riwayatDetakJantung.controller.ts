@@ -16,7 +16,7 @@ class RiwayatDetakJantungController {
   ) {} // Receives service as an argument
 
   // UNAUTHORIZED ENDPOINT
-  async createNewDetakJantung(req: Request, res: Response): Promise<void> {
+  async createNewDetakJantungOrEmergensi(req: Request, res: Response): Promise<void> {
     try {    
         var detakJantungUUID = uuidv4();
         var emergensiUUID = uuidv4();
@@ -67,7 +67,7 @@ class RiwayatDetakJantungController {
             return;
           }
           logger.info(`Status RIWAYAT DETAK JANTUNG PENDERITA: ${penderita_username} has been updated to ABNORMAL`);
-          
+
           const detakJantungSOS = await this.emergencyService.createNewAutomatedEmergensi({
             emergensi_id: emergensiUUID,
             penderita_id: penderita.penderita_id,

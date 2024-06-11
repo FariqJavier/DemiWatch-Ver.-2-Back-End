@@ -4,6 +4,29 @@ import LokasiTujuan from '../models/lokasiTujuan.model';
 import RiwayatPerjalanan from '../models/riwayatPerjalanan.model';
 import PenderitaService from './penderita.service';
 
+function toRadians(degrees: number): number {
+  return degrees * Math.PI / 180;
+}
+
+// rumus haversine dalam meter
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Radius bumi dalam kilometer
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = R * c;
+
+  return distance * 1000; // Konversi kilometer ke meter
+}
+
 class RiwayatPerjalananService {
 
   constructor(
@@ -72,6 +95,18 @@ class RiwayatPerjalananService {
         where: { riwayat_perjalanan_id: id },
         order: [['timestamp', 'DESC']], // Order by timestamp in descending order
         limit: limit,
+      });
+      return lokasi;
+    } catch (error) {
+      throw new Error(`Failed to get Lokasi Terakhir Penderita ID: ${error}`);
+    }
+  }
+
+  async getLokasiTerakhirByRiwayatperjalananIdTanpaLimit(id: string): Promise<LokasiTerakhir| null> {
+    try { 
+      const lokasi = await LokasiTerakhir.findOne({
+        where: { riwayat_perjalanan_id: id },
+        order: [['timestamp', 'DESC']], // Order by timestamp in descending order
       });
       return lokasi;
     } catch (error) {
@@ -158,6 +193,23 @@ class RiwayatPerjalananService {
     }
   }
 
+  async getRiwayatPerjalananPenderitaTerakhir(username: string): Promise<RiwayatPerjalanan | null> {
+    try {
+      const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
+      // Check if the penderita was found
+      if (!penderita) {
+        throw new Error('Penderita Account not found');
+      }
+      const riwayat = await RiwayatPerjalanan.findOne({
+        where: { penderita_id: penderita.penderita_id },
+        order: [['created_at', 'DESC']],
+      })
+      return riwayat;
+    } catch (error) {
+      throw new Error(`Failed to get Riwayat Perjalanan by Riwayat Perjalanan Id: ${error}`);
+    }
+  }
+
   async getKelompokLokasiByEveryRiwayatPerjalananPenderita(username: string): Promise<any> {
     try {
       const riwayatPerjalanan = await this.getAllRiwayatPerjalananByPenderitaUsername(username)
@@ -210,6 +262,84 @@ class RiwayatPerjalananService {
     }
   }
 
+  async getJarakLokasiTerakhirDenganLokasiAwal(username: string): Promise<number[]> {
+    try {
+      const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
+      // Check if the penderita was found
+      if (!penderita) {
+        throw new Error('Penderita Account not found');
+      }
+      const riwayat = await this.getRiwayatPerjalananPenderitaTerakhir(username);
+      // Check if the latest riwayat was found
+      if (!riwayat) {
+        throw new Error('Riwayat Perjalanan not found');
+      }
+      const lokasiAwal = await this.getAllLokasiAwalByRiwayatPerjalananId(riwayat.riwayat_perjalanan_id);
+      // Check if the all latest Lokasi Awal was found
+      if (!lokasiAwal) {
+        throw new Error('Lokasi Awal not found');
+      }
+      const lokasiTerakhir = await this.getLokasiTerakhirByRiwayatperjalananIdTanpaLimit(riwayat.riwayat_perjalanan_id);
+      // Check if the latest Lokasi Terakhir was found
+      if (!lokasiTerakhir) {
+        throw new Error('Lokasi Terakhir not found');
+      }
+
+      // Rumus Haversine
+      const semuaJarak = lokasiAwal.map((lokasi) => {
+        return haversineDistance(
+          Number(lokasi.latitude_awal),
+          Number(lokasi.longitude_awal),
+          Number(lokasiTerakhir.latitude_terakhir),
+          Number(lokasiTerakhir.longitude_terakhir)
+        )
+      })
+
+      return semuaJarak      
+    } catch (error) {
+      throw new Error(`Failed to get Jarak Antara Lokasi Awal dan Lokasi Terakhir: ${error}`);
+    }
+  }
+
+  async getJarakLokasiTerakhirDenganLokasiTujuan(username: string): Promise<number[]> {
+    try {
+      const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
+      // Check if the penderita was found
+      if (!penderita) {
+        throw new Error('Penderita Account not found');
+      }
+      const riwayat = await this.getRiwayatPerjalananPenderitaTerakhir(username);
+      // Check if the latest riwayat was found
+      if (!riwayat) {
+        throw new Error('Riwayat Perjalanan not found');
+      }
+      const lokasiTujuan = await this.getAllLokasiTujuanByRiwayatPerjalananId(riwayat.riwayat_perjalanan_id);
+      // Check if the all latest Lokasi Awal was found
+      if (!lokasiTujuan) {
+        throw new Error('Lokasi Tujuan not found');
+      }
+      const lokasiTerakhir = await this.getLokasiTerakhirByRiwayatperjalananIdTanpaLimit(riwayat.riwayat_perjalanan_id);
+      // Check if the latest Lokasi Terakhir was found
+      if (!lokasiTerakhir) {
+        throw new Error('Lokasi Terakhir not found');
+      }
+
+      // Rumus Haversine
+      const semuaJarak = lokasiTujuan.map((lokasi) => {
+        return haversineDistance(
+          Number(lokasi.latitude_tujuan),
+          Number(lokasi.longitude_tujuan),
+          Number(lokasiTerakhir.latitude_terakhir),
+          Number(lokasiTerakhir.longitude_terakhir)
+        )
+      })
+
+      return semuaJarak      
+    } catch (error) {
+      throw new Error(`Failed to get Jarak Antara Lokasi Tujuan dan Lokasi Terakhir: ${error}`);
+    }
+  }
+
   async updateLokasiTujuanByLokasiTujuanId(username: string, riwayat_perjalanan_id: string, data: {
     alamat_tujuan: string | null;
     longitude_tujuan: Float32Array | null;
@@ -237,6 +367,30 @@ class RiwayatPerjalananService {
       return [updatedRows, updatedLokasi];
     } catch (error) {
       throw new Error(`Failed to update Lokasi Tujuan: ${error}`);
+    }
+  }
+
+  async updateRiwayatPerjalananPenderitaTerakhirStatus(username: string, data: {
+    status: string;
+  }): Promise<[number, RiwayatPerjalanan[]]> {
+    try {
+      const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
+      if (!penderita) {
+        throw new Error('Penderita not found');
+      }
+      const riwayatPerjalanan = await this.getRiwayatPerjalananPenderitaTerakhir(username)
+      if (!riwayatPerjalanan) {
+        throw new Error('Riwayat Perjalanan not found');
+      }
+      const [updatedRows, updatedRiwayat] = await RiwayatPerjalanan.update(data, {
+        where: { 
+          riwayat_perjalanan_id: riwayatPerjalanan.riwayat_perjalanan_id
+         },
+        returning: true,
+      });
+      return [updatedRows, updatedRiwayat];
+    } catch (error) {
+      throw new Error(`Failed to update Latest Riwayat Perjalanan Penderita Status: ${error}`);
     }
   }
 }
