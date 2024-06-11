@@ -9,6 +9,7 @@ class Emergensi extends Model {
   public jarak_tersesat!: number;
   public emergensi_button!: boolean;
   public nilai_accelerometer!: number;
+  public readonly timestamp!: Date;
 }
 
 Emergensi.init({
@@ -42,6 +43,11 @@ Emergensi.init({
   nilai_accelerometer: {
     type: DataTypes.FLOAT,
     allowNull: true,
+  },
+  timestamp: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   },
 }, {
   sequelize,

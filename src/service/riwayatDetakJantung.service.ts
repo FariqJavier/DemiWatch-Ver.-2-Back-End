@@ -276,7 +276,7 @@ class RiwayatDetakJantungService {
       }
       const [updatedRows, updatedRiwayat] = await RiwayatDetakJantung.update(data, {
         where: { 
-          riwayat_detak_jantung_id: riwayatDetakJantung.riwayat_detak_jantung_id
+          riwayat_detak_jantung_id: riwayatDetakJantung.riwayat_detak_jantung_id,
          },
         returning: true,
       });

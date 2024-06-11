@@ -40,6 +40,7 @@ class EmergensiService {
         if (!penderita) {
           throw new Error('Penderita Account not found');
         }
+        
         const newData = {
             emergensi_id: data.emergensi_id,
             penderita_id: penderita.penderita_id,

@@ -5,6 +5,7 @@ import PenderitaService from '../service/penderita.service';
 import HubunganPenderitaService from '../service/hubunganPenderita.service';
 import RiwayatDetakJantungService from '../service/riwayatDetakJantung.service';
 import EmergensiService from '../service/emergensi.service';
+import NotifikasiService from '../service/notifikasi.service';
 
 class RiwayatDetakJantungController {
 
@@ -13,6 +14,7 @@ class RiwayatDetakJantungController {
     private readonly hubunganPenderitaService: HubunganPenderitaService,
     private readonly riwayatDetakJantungService : RiwayatDetakJantungService,
     private readonly emergencyService : EmergensiService,
+    private readonly notifikasiService : NotifikasiService,
   ) {} // Receives service as an argument
 
   // UNAUTHORIZED ENDPOINT
@@ -20,6 +22,7 @@ class RiwayatDetakJantungController {
     try {    
         var detakJantungUUID = uuidv4();
         var emergensiUUID = uuidv4();
+        var notifikasiUUID = uuidv4();
 
         const { 
           penderita_username } = req.params;
@@ -55,17 +58,7 @@ class RiwayatDetakJantungController {
         if (checkDetakJantungSOS) {
           const [updatedRows, updatedStatusRiwayat] = await this.riwayatDetakJantungService.updateRiwayatDetakJantungStatus(penderita_username, {
             status: "ABNORMAL"
-          })
-          if (!updatedStatusRiwayat) {
-            logger.error({ message: 'PENDERITA Account not found' })
-            res.status(404).json({ message: 'PENDERITA Account not found' });
-            return;
-          }
-          if (updatedRows === 0) {
-            logger.error({ message: 'PENDERITA Account not found' })
-            res.status(404).json({ message: 'PENDERITA Account not found' });
-            return;
-          }
+          });
           logger.info(`Status RIWAYAT DETAK JANTUNG PENDERITA: ${penderita_username} has been updated to ABNORMAL`);
 
           const detakJantungSOS = await this.emergencyService.createNewAutomatedEmergensi({
@@ -76,12 +69,22 @@ class RiwayatDetakJantungController {
             emergensi_button: null,
             nilai_accelerometer: null,
           })
-          logger.info(`EMERGENCY! PENDERITA ${penderita_username} has abnormal BPM`);
+          logger.info(`EMERGENCY! PENDERITA ${penderita_username} has ABNORMAL BPM`);
+
+          const notifikasi = await this.notifikasiService.createNewNotifikasi(penderita_username, {
+            notifikasi_id: notifikasiUUID,
+            emergensi_id: emergensiUUID,
+            tipe: 'ABNORMAL BPM PENDERITA',
+            pesan: `EMERGENCY! PENDERITA ${penderita_username} has ABNORMAL BPM`,
+            timestamp: detakJantungSOS.timestamp
+          })
+          logger.info(`NOTIFIKASI has Successfully created`);
 
           const riwayatUpdated = await this.riwayatDetakJantungService.getRiwayatDetakJantungByPenderitaUsername(penderita_username)
           res.status(201).json({
-            message: `EMERGENCY! PENDERITA ${penderita_username} has abnormal BPM`,
+            message: `EMERGENCY! PENDERITA ${penderita_username} has ABNORMAL BPM`,
             data: {
+              notifikasi: notifikasi,
               emergensi: detakJantungSOS,
               riwayat: riwayatUpdated,
               detakJantung: riwayat
@@ -89,6 +92,10 @@ class RiwayatDetakJantungController {
           })
           return;
         }
+        const [updatedRows, updatedStatusRiwayat] = await this.riwayatDetakJantungService.updateRiwayatDetakJantungStatus(penderita_username, {
+          status: "NORMAL"
+        });
+        logger.info(`Status RIWAYAT DETAK JANTUNG PENDERITA: ${penderita_username} has been updated to NORMAL`);
 
         res.status(201).json({
           message: `New DETAK JANTUNG for PENDERITA ${penderita_username} created successfully`,

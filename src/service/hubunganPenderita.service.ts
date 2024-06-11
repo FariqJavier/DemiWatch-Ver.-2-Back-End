@@ -162,7 +162,12 @@ class HubunganPenderitaService {
       }
       const detailKeluargaList: DetailKeluarga[] = [];
       for (const hubunganPenderita of hubungan) {
-        const detailKeluarga = await this.detailKeluargaService.getDetailKeluargaByKeluargaId(hubunganPenderita.keluarga_id);
+        const keluarga = await this.keluargaService.getKeluargaByKeluargaId(hubunganPenderita.keluarga_id)
+        // Check if the penderita was found
+        if (!keluarga) {
+          throw new Error('KELUARGA Account not found');
+        }
+        const detailKeluarga = await this.detailKeluargaService.getDetailKeluargaByKeluargaUsername(keluarga.username);
         if (detailKeluarga !== null) {
           detailKeluargaList.push(detailKeluarga);
         }
@@ -187,7 +192,12 @@ class HubunganPenderitaService {
       }
       const detailPenderitaList: DetailPenderita[] = [];
       for (const hubunganKeluarga of hubungan) {
-        const detailPenderita = await this.detailPenderitaService.getDetailPenderitaByPenderitaId(hubunganKeluarga.penderita_id);
+        const penderita= await this.penderitaService.getPenderitaByPenderitaId(hubunganKeluarga.penderita_id)
+        // Check if the penderita was found
+        if (!penderita) {
+          throw new Error('PENDERITA Account not found');
+        }
+        const detailPenderita = await this.detailPenderitaService.getDetailPenderitaByPenderitaUsername(penderita.username);
         if (detailPenderita !== null) {
           detailPenderitaList.push(detailPenderita);
         }

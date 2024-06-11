@@ -17,7 +17,8 @@ import AlamatController from "./controller/alamat.controller";
 import RiwayatDetakJantungService from "./service/riwayatDetakJantung.service";
 import RiwayatDetakJantungController from "./controller/riwayatDetakJantung.controller";
 import EmergensiService from "./service/emergensi.service";
-import EmergensiController from "./controller/emergensi.controller";
+import NotifikasiService from "./service/notifikasi.service";
+import NotifikasiEmergensiController from "./controller/notifikasiEmergensi.controller";
 
 const refreshTokenController = new RefreshTokenController(
   new AuthService()
@@ -84,6 +85,19 @@ const riwayatPerjalananController = new RiwayatPerjalananController(
   new EmergensiService(
     new PenderitaService(),
   ),
+  new NotifikasiService(
+    new PenderitaService(),
+    new HubunganPenderitaService(
+      new KeluargaService(),
+      new PenderitaService(),
+      new DetailPenderitaService(
+        new PenderitaService(),
+      ),
+      new DetailKeluargaService(
+        new KeluargaService(),
+      ),
+    )
+  )
 )
 
 const alamatController = new AlamatController(
@@ -123,14 +137,40 @@ const riwayatDetakJantungController = new RiwayatDetakJantungController(
   ),
   new EmergensiService(
     new PenderitaService()
+  ),
+  new NotifikasiService(
+    new PenderitaService(),
+    new HubunganPenderitaService(
+      new KeluargaService(),
+      new PenderitaService(),
+      new DetailPenderitaService(
+        new PenderitaService(),
+      ),
+      new DetailKeluargaService(
+        new KeluargaService(),
+      ),
+    )
   )
 )
 
-const emergensiController = new EmergensiController(
+const notifikasiEmergensiController = new NotifikasiEmergensiController(
   new PenderitaService(),
   new EmergensiService(
     new PenderitaService(),
   ),
+  new NotifikasiService(
+    new PenderitaService(),
+    new HubunganPenderitaService(
+      new KeluargaService(),
+      new PenderitaService(),
+      new DetailPenderitaService(
+        new PenderitaService(),
+      ),
+      new DetailKeluargaService(
+        new KeluargaService(),
+      ),
+    )
+  )
 )
 
 function routes(app: Express){
@@ -319,12 +359,12 @@ function routes(app: Express){
 
   // Create Emergensi Jika Emergensi Button Ditekan
   app.post('/api/penderita/:penderita_username/emergensi/button', async (req: Request, res: Response) => {
-    try { await emergensiController.createNewEmergensiByEmergencyButton(req, res) } catch (error: any) { }
+    try { await notifikasiEmergensiController.createNewEmergensiByEmergencyButton(req, res) } catch (error: any) { }
   });
 
   // Create Emergensi Jika Nilai Accelerometer Tidak Normal
   app.post('/api/penderita/:penderita_username/emergensi/accelerometer', async (req: Request, res: Response) => {
-    try { await emergensiController.createNewEmergensiByNilaiAccelerometer(req, res) } catch (error: any) { }
+    try { await notifikasiEmergensiController.createNewEmergensiByNilaiAccelerometer(req, res) } catch (error: any) { }
   });
 
   /* START FITUR EMERGENSI  ################################################################################ */

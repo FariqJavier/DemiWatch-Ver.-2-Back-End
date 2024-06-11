@@ -5,6 +5,7 @@ import PenderitaService from '../service/penderita.service';
 import HubunganPenderitaService from '../service/hubunganPenderita.service';
 import RiwayatPerjalananService from '../service/riwayatPerjalanan.service';
 import EmergensiService from '../service/emergensi.service';
+import NotifikasiService from '../service/notifikasi.service';
 
 class RiwayatPerjalananController {
 
@@ -13,6 +14,7 @@ class RiwayatPerjalananController {
     private readonly hubunganPenderitaService: HubunganPenderitaService,
     private readonly riwayatPerjalananService : RiwayatPerjalananService,
     private readonly emergensiService : EmergensiService,
+    private readonly notifikasiService : NotifikasiService,
   ) {} // Receives service as an argument
 
   async createNewRiwayatPerjalanan(req: Request, res: Response): Promise<void> {
@@ -170,6 +172,7 @@ class RiwayatPerjalananController {
     try {
       const lokasiTerakhirUUID = uuidv4();
       const emergensiUUID = uuidv4();
+      const notifikasiUUID = uuidv4();
 
       const { 
         penderita_username } = req.params;
@@ -248,10 +251,20 @@ class RiwayatPerjalananController {
         })
         logger.info(`EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`);
 
+        const notifikasi = await this.notifikasiService.createNewNotifikasi(penderita_username, {
+          notifikasi_id: notifikasiUUID,
+          emergensi_id: emergensiUUID,
+          tipe: 'PENDERITA TERSESAT',
+          pesan: `EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`,
+          timestamp: tersesatSOS.timestamp
+        })
+        logger.info(`NOTIFIKASI has Successfully created`);
+
         const riwayatUpdated = await this.riwayatPerjalananService.getRiwayatPerjalananPenderitaTerakhir(penderita_username)
         res.status(201).json({
           message: `EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`,
           data: {
+            notifikasi: notifikasi,
             emergensi: tersesatSOS,
             riwayat: riwayatUpdated,
             lokasiTerakhir: lokasi

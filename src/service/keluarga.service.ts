@@ -15,6 +15,17 @@ class KeluargaService {
     }
   }
 
+  async getKeluargaByKeluargaId(id: string): Promise<Keluarga | null> {
+    try {
+      const keluarga = await Keluarga.findOne({
+        where: { keluarga_id: id }
+      });
+      return keluarga;
+    } catch (error) {
+      throw new Error(`Failed to get Keluarga Account: ${error}`);
+    }
+  }
+
   async getKeluargaByKeluargaUsername(username: string): Promise<Keluarga | null> {
     try {
       const keluarga = await Keluarga.findOne({
