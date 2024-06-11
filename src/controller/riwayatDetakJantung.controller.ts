@@ -19,6 +19,7 @@ class RiwayatDetakJantungController {
   async createNewDetakJantung(req: Request, res: Response): Promise<void> {
     try {    
         var detakJantungUUID = uuidv4();
+        var emergensiUUID = uuidv4();
 
         const { 
           penderita_username } = req.params;
@@ -44,6 +45,44 @@ class RiwayatDetakJantungController {
           bpm_terakhir
         })
         logger.info(`New DETAK JANTUNG created succesfully`);
+
+        const rataRataBPMTenMinutes = await this.riwayatDetakJantungService.getLastTenMinutesDetakJantungPenderita(penderita_username);
+        logger.info(`DETAK JANTUNG Rata-rata for 10 minutes: ${rataRataBPMTenMinutes} for PENDERITA ${penderita_username}`);
+        
+        const checkDetakJantungSOS = await this.riwayatDetakJantungService.CheckForLastTenMinutesDetakJantungPenderitaSOS(penderita_username, rataRataBPMTenMinutes)
+        logger.info(`DETAK JANTUNG SOS: ${checkDetakJantungSOS} for PENDERITA ${penderita_username}`);
+
+        if (checkDetakJantungSOS) {
+          const [updatedRows, updatedStatusRiwayat] = await this.riwayatDetakJantungService.updateRiwayatDetakJantungStatus(penderita_username, {
+            status: "ABNORMAL"
+          })
+          if (!updatedStatusRiwayat) {
+            logger.error({ message: 'PENDERITA Account not found' })
+            res.status(404).json({ message: 'PENDERITA Account not found' });
+            return;
+          }
+          if (updatedRows === 0) {
+            logger.error({ message: 'PENDERITA Account not found' })
+            res.status(404).json({ message: 'PENDERITA Account not found' });
+            return;
+          }
+          logger.info(`Status RIWAYAT DETAK JANTUNG PENDERITA: ${penderita_username} has been updated to ABNORMAL`);
+          
+          const detakJantungSOS = await this.emergencyService.createNewAutomatedEmergensi({
+            emergensi_id: emergensiUUID,
+            penderita_id: penderita.penderita_id,
+            bpm_sepuluh_menit_terakhir: rataRataBPMTenMinutes,
+            jarak_tersesat: null,
+            emergensi_button: null,
+            nilai_accelerometer: null,
+          })
+          logger.info(`EMERGENCY! PENDERITA ${penderita_username} has abnormal BPM`);
+          res.status(201).json({
+            message: `EMERGENCY! PENDERITA ${penderita_username} has abnormal BPM`,
+            data: detakJantungSOS
+          })
+          return;
+        }
 
         res.status(201).json({
           message: `New DETAK JANTUNG for PENDERITA ${penderita_username} created successfully`,

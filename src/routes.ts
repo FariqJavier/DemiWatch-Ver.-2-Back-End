@@ -38,7 +38,10 @@ const penderitaController = new PenderitaController(
     )
   ),
   new RiwayatDetakJantungService(
-    new PenderitaService()
+    new PenderitaService(),
+    new DetailPenderitaService(
+      new PenderitaService()
+    )
   ),
   new AuthService()
 );
@@ -109,7 +112,10 @@ const riwayatDetakJantungController = new RiwayatDetakJantungController(
     )
   ),
   new RiwayatDetakJantungService(
-    new PenderitaService()
+    new PenderitaService(),
+    new DetailPenderitaService(
+      new PenderitaService()
+    )
   ),
   new EmergensiService(
     new PenderitaService()

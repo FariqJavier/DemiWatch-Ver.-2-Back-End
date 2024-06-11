@@ -5,7 +5,7 @@ import Penderita from './penderita.model';
 class Emergensi extends Model {
   public emergensi_id!: string;
   public penderita_id!: string;
-  public bpm_sepuluh_menit_terakhir!: Int16Array;
+  public bpm_sepuluh_menit_terakhir!: number;
   public jarak_tersesat!: Float32Array;
   public emergensi_button!: boolean;
   public nilai_accelerometer!: Float32Array;
@@ -28,16 +28,20 @@ Emergensi.init({
     }
   },
   bpm_sepuluh_menit_terakhir: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.NUMBER,
+    allowNull: true,
   },
   jarak_tersesat: {
     type: DataTypes.FLOAT,
+    allowNull: true,
   },
   emergensi_button: {
     type: DataTypes.BOOLEAN,
+    allowNull: true,
   },
   nilai_accelerometer: {
     type: DataTypes.FLOAT,
+    allowNull: true,
   },
 }, {
   sequelize,
