@@ -205,12 +205,12 @@ class RiwayatPerjalananController {
 
       const jarak_terhadap_lokasi_awal = await this.riwayatPerjalananService.getJarakLokasiTerakhirDenganLokasiAwal(penderita_username);
       const jarak_max = await this.riwayatPerjalananService.getJarakMaxLokasiAwalDenganLokasiTujuan(penderita_username);
-      const jarak_max_safe = jarak_max ** 2;
+      const jarak_max_safe = jarak_max * 2;
       logger.info(`Jarak Safe Maksimum Penderita: ${jarak_max_safe}`)
 
       const jarak_jumlah_kuadrat_arr = jarak_terhadap_lokasi_tujuan.map((tujuan) => {
         return jarak_terhadap_lokasi_awal.map((awal) => {
-          return ((awal ** 2) + (tujuan ** 2));
+          return ((awal) + (tujuan));
         })
       })
 
