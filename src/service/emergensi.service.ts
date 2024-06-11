@@ -28,7 +28,7 @@ class EmergensiService {
   }
 
   async createNewManualEmergensi(username: string, data: {
-    emergency_id: string;
+    emergensi_id: string;
     bpm_sepuluh_menit_terakhir: null;
     jarak_tersesat: null;
     emergensi_button: boolean | null;
@@ -41,7 +41,7 @@ class EmergensiService {
           throw new Error('Penderita Account not found');
         }
         const newData = {
-            emergency_id: data.emergency_id,
+            emergensi_id: data.emergensi_id,
             penderita_id: penderita.penderita_id,
             bpm_sepuluh_menit_terakhir: data.bpm_sepuluh_menit_terakhir,
             jarak_tersesat: data.jarak_tersesat,

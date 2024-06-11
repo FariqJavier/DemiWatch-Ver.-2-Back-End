@@ -17,6 +17,7 @@ import AlamatController from "./controller/alamat.controller";
 import RiwayatDetakJantungService from "./service/riwayatDetakJantung.service";
 import RiwayatDetakJantungController from "./controller/riwayatDetakJantung.controller";
 import EmergensiService from "./service/emergensi.service";
+import EmergensiController from "./controller/emergensi.controller";
 
 const refreshTokenController = new RefreshTokenController(
   new AuthService()
@@ -123,6 +124,13 @@ const riwayatDetakJantungController = new RiwayatDetakJantungController(
   new EmergensiService(
     new PenderitaService()
   )
+)
+
+const emergensiController = new EmergensiController(
+  new PenderitaService(),
+  new EmergensiService(
+    new PenderitaService(),
+  ),
 )
 
 function routes(app: Express){
@@ -299,6 +307,27 @@ function routes(app: Express){
   });
 
   /* END FITUR RIWAYAT DETAK JANTUNG  ###################################################################### */
+
+  /* START FITUR EMERGENSI  ################################################################################ */
+
+  // UNAUTHORIZED ENDPOINT
+  // Create Emergensi Jika Detak Jantung Tidak Normal
+  // Ada di Endpoint Create New Detak Jantung
+ 
+  // Create Emergensi Jika Tersesat
+  // Ada di Endpoint Create New Lokasi Terakhir
+
+  // Create Emergensi Jika Emergensi Button Ditekan
+  app.post('/api/penderita/:penderita_username/emergensi/button', async (req: Request, res: Response) => {
+    try { await emergensiController.createNewEmergensiByEmergencyButton(req, res) } catch (error: any) { }
+  });
+
+  // Create Emergensi Jika Nilai Accelerometer Tidak Normal
+  app.post('/api/penderita/:penderita_username/emergensi/accelerometer', async (req: Request, res: Response) => {
+    try { await emergensiController.createNewEmergensiByNilaiAccelerometer(req, res) } catch (error: any) { }
+  });
+
+  /* START FITUR EMERGENSI  ################################################################################ */
 
 }
 
