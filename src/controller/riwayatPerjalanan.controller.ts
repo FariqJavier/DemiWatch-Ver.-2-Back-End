@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import PenderitaService from '../service/penderita.service';
 import HubunganPenderitaService from '../service/hubunganPenderita.service';
 import RiwayatPerjalananService from '../service/riwayatPerjalanan.service';
+import EmergensiService from '../service/emergensi.service';
 
 class RiwayatPerjalananController {
 
@@ -11,6 +12,7 @@ class RiwayatPerjalananController {
     private readonly penderitaService: PenderitaService,
     private readonly hubunganPenderitaService: HubunganPenderitaService,
     private readonly riwayatPerjalananService : RiwayatPerjalananService,
+    private readonly emergensiService : EmergensiService,
   ) {} // Receives service as an argument
 
   async createNewRiwayatPerjalanan(req: Request, res: Response): Promise<void> {
@@ -164,9 +166,10 @@ class RiwayatPerjalananController {
     }
   }
 
-  async updateLokasiTerakhirByRiwayatPerjalananTerakhirOrSelesai(req: Request, res: Response): Promise<void> {
+  async updateLokasiTerakhirByRiwayatPerjalananTerakhirOrSelesaiOrEmergensi(req: Request, res: Response): Promise<void> {
     try {
       const lokasiTerakhirUUID = uuidv4();
+      const emergensiUUID = uuidv4();
 
       const { 
         penderita_username } = req.params;
@@ -196,7 +199,68 @@ class RiwayatPerjalananController {
       logger.info(`New Lokasi Terakhir updated succesfully`);
 
       const jarak_terhadap_lokasi_tujuan = await this.riwayatPerjalananService.getJarakLokasiTerakhirDenganLokasiTujuan(penderita_username);
-      const isFinishedList = jarak_terhadap_lokasi_tujuan.map((jarak) => {
+
+      const jarak_terhadap_lokasi_awal = await this.riwayatPerjalananService.getJarakLokasiTerakhirDenganLokasiAwal(penderita_username);
+      const jarak_max = await this.riwayatPerjalananService.getJarakMaxLokasiAwalDenganLokasiTujuan(penderita_username);
+      const jarak_max_safe = jarak_max ** 2;
+      logger.info(`Jarak Safe Maksimum Penderita: ${jarak_max_safe}`)
+
+      const jarak_jumlah_kuadrat_arr = jarak_terhadap_lokasi_tujuan.map((tujuan) => {
+        return jarak_terhadap_lokasi_awal.map((awal) => {
+          return ((awal ** 2) + (tujuan ** 2));
+        })
+      })
+
+      const jarak_jumlah_kuadrat_list = jarak_jumlah_kuadrat_arr.flat();
+      logger.info(`Jumlah Jarak Kuadrat Maksimum: ${Math.max(...jarak_jumlah_kuadrat_list)}`)
+      const is_tersesat_list = jarak_jumlah_kuadrat_list.map((jarak) => {
+        if ( jarak > jarak_max_safe ) {
+          return true;
+        }
+        return false;
+      })
+
+      // Menggunakan metode .some() untuk mengecek apakah ada elemen yang true
+      const any_tersesat = is_tersesat_list.some(element => element === true);
+      if (any_tersesat) {
+        const [updatedRows, updatedStatusRiwayat] = await this.riwayatPerjalananService.updateRiwayatPerjalananPenderitaTerakhirStatus(penderita_username, {
+          status: "TERSESAT"
+        })
+        if (!updatedStatusRiwayat) {
+          logger.error({ message: 'PENDERITA Account not found' })
+          res.status(404).json({ message: 'PENDERITA Account not found' });
+          return;
+        }
+        if (updatedRows === 0) {
+          logger.error({ message: 'PENDERITA Account not found' })
+          res.status(404).json({ message: 'PENDERITA Account not found' });
+          return;
+        }
+        logger.info(`Status RIWAYAT DETAK JANTUNG PENDERITA: ${penderita_username} has been updated to TERSESAT`);
+
+        const tersesatSOS = await this.emergensiService.createNewAutomatedEmergensi({
+          emergensi_id: emergensiUUID,
+          penderita_id: penderita.penderita_id,
+          bpm_sepuluh_menit_terakhir: null,
+          jarak_tersesat: Math.max(...jarak_terhadap_lokasi_tujuan),
+          emergensi_button: null,
+          nilai_accelerometer: null,
+        })
+        logger.info(`EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`);
+
+        const riwayatUpdated = await this.riwayatPerjalananService.getRiwayatPerjalananPenderitaTerakhir(penderita_username)
+        res.status(201).json({
+          message: `EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`,
+          data: {
+            emergensi: tersesatSOS,
+            riwayat: riwayatUpdated,
+            lokasiTerakhir: lokasi
+          }
+        })
+        return;
+      }
+
+      const is_finished_list = jarak_terhadap_lokasi_tujuan.map((jarak) => {
         if ((jarak >= 0) && (jarak <= 10)){
           return true;
         }
@@ -204,8 +268,8 @@ class RiwayatPerjalananController {
       })
 
       // Menggunakan metode .every() untuk mengecek apakah semua elemen adalah true
-      const allFinished = isFinishedList.every(element => element === true);
-      if (allFinished) {
+      const all_finished = is_finished_list.every(element => element === true);
+      if (all_finished) {
         const [updatedRows, updatedStatus] = await this.riwayatPerjalananService.updateRiwayatPerjalananPenderitaTerakhirStatus(penderita_username, {
           status: "SELESAI"
         })

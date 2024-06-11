@@ -77,9 +77,15 @@ class RiwayatDetakJantungController {
             nilai_accelerometer: null,
           })
           logger.info(`EMERGENCY! PENDERITA ${penderita_username} has abnormal BPM`);
+
+          const riwayatUpdated = await this.riwayatDetakJantungService.getRiwayatDetakJantungByPenderitaUsername(penderita_username)
           res.status(201).json({
             message: `EMERGENCY! PENDERITA ${penderita_username} has abnormal BPM`,
-            data: detakJantungSOS
+            data: {
+              emergensi: detakJantungSOS,
+              riwayat: riwayatUpdated,
+              detakJantung: riwayat
+            }
           })
           return;
         }

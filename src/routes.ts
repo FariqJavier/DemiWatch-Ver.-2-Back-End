@@ -79,7 +79,10 @@ const riwayatPerjalananController = new RiwayatPerjalananController(
   ),
   new RiwayatPerjalananService(
     new PenderitaService()
-  )
+  ),
+  new EmergensiService(
+    new PenderitaService(),
+  ),
 )
 
 const alamatController = new AlamatController(
@@ -220,7 +223,7 @@ function routes(app: Express){
   // UNAUTHORIZED ENDPOINT
   // Update New Lokasi Terakhir Penderita
   app.post('/api/penderita/:penderita_username/riwayatperjalanan/lastlocation', async (req: Request, res: Response) => {
-    try { await riwayatPerjalananController.updateLokasiTerakhirByRiwayatPerjalananTerakhirOrSelesai(req, res) } catch (error: any) { }
+    try { await riwayatPerjalananController.updateLokasiTerakhirByRiwayatPerjalananTerakhirOrSelesaiOrEmergensi(req, res) } catch (error: any) { }
   });
 
   // Get Penderita 5 Last Location

@@ -340,6 +340,53 @@ class RiwayatPerjalananService {
     }
   }
 
+  async getJarakMaxLokasiAwalDenganLokasiTujuan(username: string): Promise<number> {
+    try {
+      const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
+      // Check if the penderita was found
+      if (!penderita) {
+        throw new Error('Penderita Account not found');
+      }
+      const riwayat = await this.getRiwayatPerjalananPenderitaTerakhir(username);
+      // Check if the latest riwayat was found
+      if (!riwayat) {
+        throw new Error('Riwayat Perjalanan not found');
+      }
+      const lokasiTujuan = await this.getAllLokasiTujuanByRiwayatPerjalananId(riwayat.riwayat_perjalanan_id);
+      // Check if the all latest Lokasi Awal was found
+      if (!lokasiTujuan) {
+        throw new Error('Lokasi Tujuan not found');
+      }
+      const lokasiAwal = await this.getAllLokasiAwalByRiwayatPerjalananId(riwayat.riwayat_perjalanan_id);
+      // Check if the all latest Lokasi Awal was found
+      if (!lokasiAwal) {
+        throw new Error('Lokasi Terakhir not found');
+      }
+
+      // Rumus Haversine
+      const semuaJarakArr = lokasiTujuan.map((tujuan) => {
+        return lokasiAwal.map((awal) => {
+          return haversineDistance(
+            Number(awal.latitude_awal),
+            Number(awal.longitude_awal),
+            Number(tujuan.latitude_tujuan),
+            Number(tujuan.longitude_tujuan)
+          )
+        })
+      })
+
+      // Ratakan array dua dimensi menjadi array satu dimensi
+      const semuaJarak = semuaJarakArr.flat();
+
+      // Dapatkan nilai maksimum dan minimum
+      const jarakMax = Math.max(...semuaJarak);
+
+      return jarakMax     
+    } catch (error) {
+      throw new Error(`Failed to get Jarak Antara Semua Lokasi Awal dan Semua Lokasi Terakhir: ${error}`);
+    }
+  }
+
   async updateLokasiTujuanByLokasiTujuanId(username: string, riwayat_perjalanan_id: string, data: {
     alamat_tujuan: string | null;
     longitude_tujuan: Float32Array | null;

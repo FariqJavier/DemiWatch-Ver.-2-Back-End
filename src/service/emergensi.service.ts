@@ -11,7 +11,7 @@ class EmergensiService {
     emergensi_id: string;
     penderita_id: string;
     bpm_sepuluh_menit_terakhir: number | null;
-    jarak_tersesat: Float32Array | null;
+    jarak_tersesat: number | null;
     emergensi_button: null;
     nilai_accelerometer: null;
   }): Promise<Emergensi> {
