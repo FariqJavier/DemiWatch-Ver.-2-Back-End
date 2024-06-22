@@ -251,10 +251,12 @@ class RiwayatPerjalananService {
         throw new Error('Riwayat Perjalanan is not from Current Penderita');
       }
       const lokasiAwal = await this.getAllLokasiAwalByRiwayatPerjalananId(riwayat_perjalanan_id)
+      const lokasiTerakhir = await this.getLokasiTerakhirByRiwayatperjalananId(riwayat_perjalanan_id, 1)
       const lokasiTujuan = await this.getAllLokasiTujuanByRiwayatPerjalananId(riwayat_perjalanan_id)
 
       return {
         lokasiAwal,
+        lokasiTerakhir,
         lokasiTujuan
       }
     } catch (error) {
