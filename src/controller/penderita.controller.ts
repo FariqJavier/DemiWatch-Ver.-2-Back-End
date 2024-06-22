@@ -79,27 +79,41 @@ class PenderitaController {
   }
 
   // Unauthorized Endpoint
-  async loginPenderitaAccount(req: Request, res: Response): Promise<void> {
+  async loginAccount(req: Request, res: Response): Promise<void> {
     try {
       const { 
         username,
         password } = req.body;
-      const penderita = await this.authService.validatePenderitaAccount(username, password);
-      if (penderita) {
-        logger.info(`Penderita: ${username} has been authenticated`);
-        res.status(200).json({
-          message: `Penderita: ${username} has been authenticated`,
+        const penderita = await this.authService.validatePenderitaAccount(username, password);
+        const keluarga = await this.authService.validateKeluargaAccount(username, password);
+        if (penderita) {
+          logger.info(`Penderita: ${username} has been authenticated`);
+          res.status(200).json({
+            message: `Penderita: ${username} has been authenticated`,
+            data: {
+              patient_id: penderita.id,
+              username: penderita.username,
+              role: penderita.role,
+              accessToken: penderita.accessToken,
+              refreshToken: penderita.refreshToken,
+            }, // Bisa berisi token atau informasi user lainnya
+          });
+        } else if (keluarga) {
+          logger.info(`KELUARGA: ${username} has been authenticated`);
+          res.status(200).json({
+          message: `KELUARGA: ${username} has been authenticated`,
           data: {
-            patient_id: penderita.id,
-            username: penderita.username,
-            accessToken: penderita.accessToken,
-            refreshToken: penderita.refreshToken,
+            keluarga_id: keluarga.id,
+            username: keluarga.username,
+            role: keluarga.role,
+            accessToken: keluarga.accessToken,
+            refreshToken: keluarga.refreshToken,
           }, // Bisa berisi token atau informasi user lainnya
         });
-      } else {
-        logger.error({ message: 'Invalid username or password' });
-        res.status(401).json({ message: 'Invalid username or password' });
-      }
+        } else {
+          logger.error({ message: 'Invalid username or password' });
+          res.status(401).json({ message: 'Invalid username or password' });
+        }
     } catch (error: any) {
       logger.error({ message: `Failed to login PENDERITA ACCOUNT: ${error.message}` });
       res.status(500).json({ message: `Failed to login PENDERITA ACCOUNT: ${error.message}` });

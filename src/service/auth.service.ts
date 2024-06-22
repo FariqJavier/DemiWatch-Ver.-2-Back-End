@@ -35,9 +35,12 @@ class AuthService {
         return { 
           id: penderita.penderita_id, 
           username: penderita.username, 
+          role: penderita,
           accessToken, 
           refreshToken 
         };
+      } else {
+        return null
       }
     } catch (error: any) {
       throw new Error(`Failed to validate PENDERITA Account: ${error}`);
@@ -69,9 +72,12 @@ class AuthService {
           return { 
             id: keluarga.keluarga_id, 
             username: keluarga.username, 
+            role: keluarga,
             accessToken, 
             refreshToken 
           };
+        } else {
+          return null
         }
       } catch (error: any) {
         throw new Error(`Failed to validate KELUARGA ACCOUNT: ${error}`);

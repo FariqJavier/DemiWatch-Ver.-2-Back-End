@@ -197,10 +197,10 @@ function routes(app: Express){
     try { await penderitaController.registerPenderitaAccount(req, res) } catch (error: any) { }
   });
 
-  // Login Penderita Account 
-  app.post('/api/penderita/login', async (req: Request, res: Response) => {
-    try { await penderitaController.loginPenderitaAccount(req, res) } catch (error: any) { }
-  });
+  // // Login Account 
+  // app.post('/api/login', async (req: Request, res: Response) => {
+  //   try { await penderitaController.loginAccount(req, res) } catch (error: any) { }
+  // });
 
   // Get Penderita Full Profile
   app.get('/api/penderita/:username', async (req: Request, res: Response) => {
@@ -228,9 +228,9 @@ function routes(app: Express){
     try { await keluargaController.registerKeluargaAccount(req, res) } catch (error: any) { }
   });
 
-  // Login Keluarga Account 
-  app.post('/api/keluarga/login', async (req: Request, res: Response) => {
-    try { await keluargaController.loginKeluargaAccount(req, res) } catch (error: any) { }
+  // Login Account 
+  app.post('/api/login', async (req: Request, res: Response) => {
+    try { await keluargaController.loginAccount(req, res) } catch (error: any) { }
   });
 
   // Get Keluarga Full Profile
