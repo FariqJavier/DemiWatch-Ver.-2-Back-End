@@ -35,7 +35,7 @@ class AuthService {
         return { 
           id: penderita.penderita_id, 
           username: penderita.username, 
-          role: penderita,
+          role: "penderita",
           accessToken, 
           refreshToken 
         };
@@ -72,7 +72,7 @@ class AuthService {
           return { 
             id: keluarga.keluarga_id, 
             username: keluarga.username, 
-            role: keluarga,
+            role: "keluarga",
             accessToken, 
             refreshToken 
           };
