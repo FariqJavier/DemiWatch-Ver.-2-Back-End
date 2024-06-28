@@ -19,7 +19,7 @@ class RiwayatPerjalananController {
 
   async createNewRiwayatPerjalanan(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         var riwayatUUID = uuidv4();
         var lokasiAwalUUID = uuidv4();
         var lokasiTerakhirUUID = uuidv4();
@@ -92,7 +92,7 @@ class RiwayatPerjalananController {
             lokasiTujuan: lokasiTujuan
           }, 
         })
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to create RIWAYAT PERJALANAN dan DETAIL LOKASI for PENDERITA: ${error.message}` })
       res.status(500).json({ message: `Failed to create RIWAYAT PERJALANAN dan DETAIL LOKASI for PENDERITA: ${error.message}` });

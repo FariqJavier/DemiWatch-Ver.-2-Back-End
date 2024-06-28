@@ -147,7 +147,7 @@ class KeluargaController {
   // AUTHORIZED ENDPOINT
   async createPenderitaConnectionByPenderitaUsername(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { username } = req.params;
         const { 
           penderita_username } = req.body;
@@ -170,7 +170,7 @@ class KeluargaController {
             keluarga_id: (await hubungan).keluarga_id
           } 
         });
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to create PENDERITA connection by PENDERITA Username: ${error.message}` })
       res.status(500).json({ message: `Failed to create PENDERITA connection by PENDERITA Username: ${error.message}` });
@@ -180,7 +180,7 @@ class KeluargaController {
   // AUTHORIZED ENDPOINT
   async createPenderitaConnectionByPenderitaDetailData(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { 
           username,
           penderita_username } = req.params;
@@ -202,7 +202,7 @@ class KeluargaController {
             keluarga_id: hubungan.keluarga_id
           } 
         });
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to create PENDERITA connection by PENDERITA DETAIL data: ${error.message}` })
       res.status(500).json({ message: `Failed to create PENDERITA connection by PENDERITA DETAIL data: ${error.message}` });
@@ -212,7 +212,7 @@ class KeluargaController {
   // AUTHORIZED ENDPOINT
   async getAllPenderitaByImperfectDetailPenderitaData(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { username } = req.params;
         const { 
           penderita_nama,
@@ -238,7 +238,7 @@ class KeluargaController {
           message: `Similar PENDERITA Accounts has been found`,
           data: penderitaList
         });
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to create PENDERITA connection by PENDERITA DETAIL data: ${error.message}` })
       res.status(500).json({ message: `Failed to create PENDERITA connection by PENDERITA DETAIL data: ${error.message}` });
@@ -248,7 +248,7 @@ class KeluargaController {
   // AUTHORIZED ENDPOINT
   async updateDataKeluargaByKeluargaUsername(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { username } = req.params;
         const { 
           nama,
@@ -273,7 +273,7 @@ class KeluargaController {
           message: `Data DETAIL KELUARGA: ${username} has been updated`,
           data: JSON.stringify(updatedDetailKeluarga[0]), 
         });
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to update Data DETAIL KELUARGA: ${error.message}` })
       res.status(500).json({ message: `Failed to update Data DETAIL KELUARGA: ${error.message}` });
@@ -283,7 +283,7 @@ class KeluargaController {
   // AUTHORIZED ENDPOINT
   async deleteKeluargaAccount(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { username } = req.params;
         const deleteRows = await this.detailKeluargaService.deleteKeluargaAccountByKeluargaUsername(username)
         if (deleteRows === 0) {
@@ -297,7 +297,7 @@ class KeluargaController {
           message: `KELUARGA Account: ${username} has been deleted`,
         });
         res.status(204).end()
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to delete KELUARGA Account: ${error.message}` })
       res.status(500).json({ message: `Failed to delete KELUARGA Account: ${error.message}` });

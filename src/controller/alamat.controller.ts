@@ -16,7 +16,7 @@ class AlamatController {
   // AUTHORIZED ENDPOINT
   async createNewAlamatTersimpan(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         var alamatUUID = uuidv4();
 
         const { 
@@ -55,7 +55,7 @@ class AlamatController {
             alamat: alamatTersimpan,
           }, 
         })
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to create ALAMAT TERSIMPAN for PENDERITA: ${error.message}` })
       res.status(500).json({ message: `Failed to create ALAMAT TERSIMPAN for PENDERITA: ${error.message}` });
@@ -119,7 +119,7 @@ class AlamatController {
   // AUTHORIZED ENDPOINT
   async updateSpecificAlamatByAlamatId(req: Request, res: Response): Promise<void> {
     try {
-        if ((req as any).user) {
+        
             const { 
                 penderita_username,
                 keluarga_username,
@@ -148,7 +148,7 @@ class AlamatController {
                 message: `Data ALAMAT TERSIMPAN: ${alamat_id} for PENDERITA: ${penderita_username} has been updated`,
                 data: JSON.stringify(updatedAlamat), 
             });
-        }
+        
     } catch (error: any) {
       logger.error({ message: `Failed to update data ALAMAT TERSIMPAN for PENDERITA: ${error.message}` })
       res.status(500).json({ message: `Failed to update data ALAMAT TERSIMPAN for PENDERITA: ${error.message}` });
@@ -158,7 +158,7 @@ class AlamatController {
   // AUTHORIZED ENDPOINT
   async deleteAlamatTersimpan(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { 
             penderita_username,
             keluarga_username,
@@ -180,7 +180,7 @@ class AlamatController {
           message: `ALAMAT TERSIMPAN ID: ${alamat_id} has been deleted`,
         });
         res.status(204).end()
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to delete ALAMAT TERSIMPAN ID: ${error.message}` })
       res.status(500).json({ message: `Failed to delete ALAMAT TERSIMPAN ID: ${error.message}` });

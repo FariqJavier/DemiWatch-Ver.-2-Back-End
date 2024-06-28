@@ -167,7 +167,7 @@ class PenderitaController {
   // AUTHORIZED ENDPOINT
   async updateDataPenderitaByPenderitaUsername(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { username } = req.params;
         const { 
           nama,
@@ -196,7 +196,7 @@ class PenderitaController {
           message: `Data DETAIL PENDERITA: ${username} has been updated`,
           data: JSON.stringify(updatedDetailPenderita[0]), 
         });
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to update Data DETAIL PENDERITA: ${error.message}` })
       res.status(500).json({ message: `Failed to update Data DETAIL PENDERITA: ${error.message}` });
@@ -206,7 +206,7 @@ class PenderitaController {
   // AUTHORIZED ENDPOINT
   async deletePenderitaAccount(req: Request, res: Response): Promise<void> {
     try {
-      if ((req as any).user) {
+      
         const { username } = req.params;
         const deleteRows = await this.detailPenderitaService.deletePenderitaAccountByPenderitaUsername(username)
         if (deleteRows === 0) {
@@ -220,7 +220,7 @@ class PenderitaController {
           message: `PENDERITA Account: ${username} has been deleted`,
         });
         res.status(204).end()
-      }
+      
     } catch (error: any) {
       logger.error({ message: `Failed to delete PENDERITA Account: ${error.message}` })
       res.status(500).json({ message: `Failed to delete PENDERITA Account: ${error.message}` });
