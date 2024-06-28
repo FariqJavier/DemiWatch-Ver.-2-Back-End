@@ -148,6 +148,27 @@ class HubunganPenderitaService {
     }
   }
 
+  async getHubunganPenderitaByPenderitaUsername(username: string): Promise<HubunganPenderita[] | null> {
+    try {
+      const penderita= await this.penderitaService.getPenderitaByPenderitaUsername(username)
+      // Check if the penderita was found
+      if (!penderita) {
+        throw new Error('Penderita Account has not found');
+      }
+      const hubungan = await HubunganPenderita.findAll({
+        where: {penderita_id: penderita.penderita_id},
+        attributes: ['penderita_id', 'keluarga_id'] 
+      })
+      // Check if the penderita was found
+      if (!hubungan) {
+        throw new Error('PENDERITA Account has not been connected to any KELUARGA Account');
+      }
+      return hubungan;
+    } catch (error) {
+      throw new Error(`Failed to get HUBUNGAN PENDERITA By PENDERITA USERNAME ${error}`);
+    }
+  }
+
   async getDetailKeluargaByPenderitaUsername(username: string): Promise<DetailKeluarga[]> {
     try {
       const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)

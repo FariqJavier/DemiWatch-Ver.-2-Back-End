@@ -281,9 +281,9 @@ function routes(app: Express){
     try { await riwayatPerjalananController.getLimaLokasiTerakhirByPenderitaUsername(req, res) } catch (error: any) { }
   });
 
-  // Get All Riwayat Perjalanan Penderita Through Keluarga Account
-  app.get('/api/keluarga/:keluarga_username/:penderita_username/riwayatperjalanan', async (req: Request, res: Response) => {
-    try { await riwayatPerjalananController.getAllRiwayatPerjalananByPenderitaUsername(req, res) } catch (error: any) { }
+  // Get Last Riwayat Perjalanan Penderita Through Keluarga Account
+  app.get('/api/penderita/:penderita_username/riwayatperjalanan', async (req: Request, res: Response) => {
+    try { await riwayatPerjalananController.getLastRiwayatPerjalananByPenderitaUsername(req, res) } catch (error: any) { }
   });
 
   // Get Specific Riwayat Perjalanan Penderita Through Keluarga Account

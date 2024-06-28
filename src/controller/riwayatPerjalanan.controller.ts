@@ -116,13 +116,12 @@ class RiwayatPerjalananController {
     }
   }
 
-  async getAllRiwayatPerjalananByPenderitaUsername(req: Request, res: Response): Promise<void> {
+  async getLastRiwayatPerjalananByPenderitaUsername(req: Request, res: Response): Promise<void> {
     try {
       const { 
-        penderita_username,
-        keluarga_username } = req.params;
+        penderita_username } = req.params;
 
-      const hubungan = await this.hubunganPenderitaService.getHubunganPenderitaByKeluargaUsername(keluarga_username)
+      const hubungan = await this.hubunganPenderitaService.getHubunganPenderitaByPenderitaUsername(penderita_username)
       // Check if the penderita was found
       if (!hubungan) {
         throw new Error('Penderita Account has not been connected to Keluarga Account');
