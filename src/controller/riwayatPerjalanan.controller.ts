@@ -128,7 +128,7 @@ class RiwayatPerjalananController {
         throw new Error('Penderita Account has not been connected to Keluarga Account');
       }
 
-      const riwayat = await this.riwayatPerjalananService.getKelompokLokasiByEveryRiwayatPerjalananPenderita( penderita_username )
+      const riwayat = await this.riwayatPerjalananService.getKelompokLokasiByLastRiwayatPerjalananPenderita( penderita_username )
       logger.info(`All RIWAYAT PERJALANAN PENDERITA: ${penderita_username} has been found`);
         res.status(200).json({
             message: `All RIWAYAT PERJALANAN PENDERITA: ${penderita_username} has been found`,

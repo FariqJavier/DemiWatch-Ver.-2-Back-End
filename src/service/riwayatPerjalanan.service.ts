@@ -236,6 +236,26 @@ class RiwayatPerjalananService {
     }
   }
 
+  async getKelompokLokasiByLastRiwayatPerjalananPenderita(username: string): Promise<any> {
+    try {
+      const riwayatPerjalanan = await this.getRiwayatPerjalananPenderitaTerakhir(username)
+      if (!riwayatPerjalanan) {
+        throw new Error('Riwayat Perjalanan not found');
+      }
+      const lokasiAwal = await this.getAllLokasiAwalByRiwayatPerjalananId(riwayatPerjalanan.riwayat_perjalanan_id)
+      const lokasiTerakhir = await this.getLokasiTerakhirByRiwayatperjalananId(riwayatPerjalanan.riwayat_perjalanan_id, 1)
+      const lokasiTujuan = await this.getAllLokasiTujuanByRiwayatPerjalananId(riwayatPerjalanan.riwayat_perjalanan_id)
+
+      return {
+        lokasiAwal,
+        lokasiTerakhir,
+        lokasiTujuan
+      }
+    } catch (error) {
+      throw new Error(`Failed to get Pengelompokan Lokasi by Every Riwayat Perjalanan Penderita: ${error}`);
+    }
+  }
+
   async getKelompokLokasiBySpecificRiwayatPerjalananPenderita(username: string, riwayat_perjalanan_id: string): Promise<any> {
     try {
       const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
