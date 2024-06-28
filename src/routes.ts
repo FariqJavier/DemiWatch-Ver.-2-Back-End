@@ -173,6 +173,8 @@ const notifikasiEmergensiController = new NotifikasiEmergensiController(
   )
 )
 
+// DOWNGRADE TO NO AUTH
+
 function routes(app: Express){
   // Test api
   app.get('/test', async (req: Request, res: Response) => {
@@ -209,12 +211,12 @@ function routes(app: Express){
 
   // AUTHORIZED ENDPOINT
   // Update Any Keluarga Data By Keluarga Username 
-  app.put('/api/penderita/:username', authenticateJWT, async (req: Request, res: Response) => {
+  app.put('/api/penderita/:username', async (req: Request, res: Response) => {
     try { await penderitaController.updateDataPenderitaByPenderitaUsername(req, res) } catch (error: any) { }
   });
 
   // Delete Keluarga Profile
-  app.delete('/api/penderita/:username', authenticateJWT, async (req: Request, res: Response) => {
+  app.delete('/api/penderita/:username', async (req: Request, res: Response) => {
     try { await penderitaController.deletePenderitaAccount(req, res) } catch (error: any) { }
   });
 
@@ -240,27 +242,27 @@ function routes(app: Express){
 
   // AUTHORIZED ENDPOINT
   // Create Penderita Connection By Penderita Username 
-  app.post('/api/keluarga/:username', authenticateJWT, async (req: Request, res: Response) => {
+  app.post('/api/keluarga/:username', async (req: Request, res: Response) => {
     try { await keluargaController.createPenderitaConnectionByPenderitaUsername(req, res) } catch (error: any) { }
   });
 
   // Get All Penderita By Penderita Incomplete Data
-  app.get('/api/keluarga/:username/searchpenderita', authenticateJWT, async (req: Request, res: Response) => {
+  app.get('/api/keluarga/:username/searchpenderita', async (req: Request, res: Response) => {
     try { await keluargaController.getAllPenderitaByImperfectDetailPenderitaData(req, res) } catch (error: any) { }
   });
 
   // Create Penderita Connection By Penderita Incomplete Data
-  app.post('/api/keluarga/:username/:penderita_username', authenticateJWT, async (req: Request, res: Response) => {
+  app.post('/api/keluarga/:username/:penderita_username', async (req: Request, res: Response) => {
     try { await keluargaController.createPenderitaConnectionByPenderitaDetailData(req, res) } catch (error: any) { }
   });
 
   // Update Any Keluarga Data By Keluarga Username 
-  app.put('/api/keluarga/:username', authenticateJWT, async (req: Request, res: Response) => {
+  app.put('/api/keluarga/:username', async (req: Request, res: Response) => {
     try { await keluargaController.updateDataKeluargaByKeluargaUsername(req, res) } catch (error: any) { }
   });
 
   // Delete Keluarga Profile
-  app.delete('/api/keluarga/:username', authenticateJWT, async (req: Request, res: Response) => {
+  app.delete('/api/keluarga/:username', async (req: Request, res: Response) => {
     try { await keluargaController.deleteKeluargaAccount(req, res) } catch (error: any) { }
   });
 
@@ -291,7 +293,7 @@ function routes(app: Express){
 
   // AUTHORIZED ENDPOINT
   // Create Penderita Riwayat Perjalanan Through Keluarga Account
-  app.post('/api/keluarga/:keluarga_username/:penderita_username/riwayatperjalanan', authenticateJWT, async (req: Request, res: Response) => {
+  app.post('/api/keluarga/:keluarga_username/:penderita_username/riwayatperjalanan', async (req: Request, res: Response) => {
     try { await riwayatPerjalananController.createNewRiwayatPerjalanan(req, res) } catch (error: any) { }
   });
 
@@ -312,17 +314,17 @@ function routes(app: Express){
 
   // AUTHORIZED ENDPOINT
   // Create New Penderita Alamat Tersimpan through Keluarga Account 
-  app.post('/api/keluarga/:keluarga_username/:penderita_username/alamat', authenticateJWT, async (req: Request, res: Response) => {
+  app.post('/api/keluarga/:keluarga_username/:penderita_username/alamat', async (req: Request, res: Response) => {
     try { await alamatController.createNewAlamatTersimpan(req, res) } catch (error: any) { }
   });
 
   // Update Penderita Alamat Tersimpan through Keluarga Account 
-  app.put('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', authenticateJWT, async (req: Request, res: Response) => {
+  app.put('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', async (req: Request, res: Response) => {
     try { await alamatController.updateSpecificAlamatByAlamatId(req, res) } catch (error: any) { }
   });
 
   // Update Penderita Alamat Tersimpan through Keluarga Account 
-  app.delete('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', authenticateJWT, async (req: Request, res: Response) => {
+  app.delete('/api/keluarga/:keluarga_username/:penderita_username/alamat/:alamat_id', async (req: Request, res: Response) => {
     try { await alamatController.deleteAlamatTersimpan(req, res) } catch (error: any) { }
   });
 
