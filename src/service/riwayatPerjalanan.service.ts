@@ -144,7 +144,7 @@ class RiwayatPerjalananService {
     }
   }
 
-  async getLimaLokasiTerakhirByPenderitaUsername(username: string): Promise<LokasiTerakhir[] | null> {
+  async getLokasiTerakhirByPenderitaUsername(username: string): Promise<LokasiTerakhir[] | null> {
     try {
       const penderita = await this.penderitaService.getPenderitaByPenderitaUsername(username)
       // Check if the penderita was found
@@ -159,7 +159,7 @@ class RiwayatPerjalananService {
       if (!riwayat) {
         throw new Error('Riwayat Perjalanan not found');
       }
-      const lokasi = await this.getLokasiTerakhirByRiwayatperjalananId(riwayat.riwayat_perjalanan_id, 5)
+      const lokasi = await this.getLokasiTerakhirByRiwayatperjalananId(riwayat.riwayat_perjalanan_id, 1)
       return lokasi;
     } catch (error) {
       throw new Error(`Failed to Five Lokasi Terakhir Penderita By Penderita Username: ${error}`);

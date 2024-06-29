@@ -277,8 +277,8 @@ function routes(app: Express){
   });
 
   // Get Penderita 5 Last Location
-  app.get('/api/penderita/:penderita_username/riwayatperjalanan/lastfivelocation', async (req: Request, res: Response) => {
-    try { await riwayatPerjalananController.getLimaLokasiTerakhirByPenderitaUsername(req, res) } catch (error: any) { }
+  app.get('/api/penderita/:penderita_username/riwayatperjalanan/lastlocation', async (req: Request, res: Response) => {
+    try { await riwayatPerjalananController.getLokasiTerakhirByPenderitaUsername(req, res) } catch (error: any) { }
   });
 
   // Get Last Riwayat Perjalanan Penderita Through Keluarga Account

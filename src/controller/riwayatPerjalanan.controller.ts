@@ -99,12 +99,12 @@ class RiwayatPerjalananController {
     }
   }
 
-  async getLimaLokasiTerakhirByPenderitaUsername(req: Request, res: Response): Promise<void> {
+  async getLokasiTerakhirByPenderitaUsername(req: Request, res: Response): Promise<void> {
     try {
       const { 
         penderita_username } = req.params;
 
-      const lokasi = await this.riwayatPerjalananService.getLimaLokasiTerakhirByPenderitaUsername( penderita_username )
+      const lokasi = await this.riwayatPerjalananService.getLokasiTerakhirByPenderitaUsername( penderita_username )
       logger.info(`Lima LOKASI TERAKHIR PENDERITA ${penderita_username} has been found`);
         res.status(200).json({
             message: `Lima LOKASI TERAKHIR PENDERITA ${penderita_username} has been found`,
