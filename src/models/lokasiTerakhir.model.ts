@@ -27,11 +27,11 @@ LokasiTerakhir.init({
   },
   longitude_terakhir: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   latitude_terakhir: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   timestamp: {
     type: DataTypes.DATE,
