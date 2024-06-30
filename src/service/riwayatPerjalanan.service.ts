@@ -1,3 +1,4 @@
+import { DoubleDataType } from 'sequelize';
 import LokasiAwal from '../models/lokasiAwal.model';
 import LokasiTerakhir from '../models/lokasiTerakhir.model';
 import LokasiTujuan from '../models/lokasiTujuan.model';
