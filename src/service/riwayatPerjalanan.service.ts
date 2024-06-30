@@ -1,3 +1,4 @@
+import { DoubleDataType } from 'sequelize';
 import LokasiAwal from '../models/lokasiAwal.model';
 import LokasiTerakhir from '../models/lokasiTerakhir.model';
 import LokasiTujuan from '../models/lokasiTujuan.model';
@@ -49,7 +50,7 @@ class RiwayatPerjalananService {
     lokasi_awal_id: string;
     riwayat_perjalanan_id: string;
     alamat_awal: string;
-    longitude_awal: Float32Array;
+    longitude_awal: DoubleDataType;
     latitude_awal: Float32Array;
   }): Promise<LokasiAwal> {
     try {
