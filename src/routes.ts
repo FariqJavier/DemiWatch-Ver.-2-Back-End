@@ -276,7 +276,7 @@ function routes(app: Express){
     try { await riwayatPerjalananController.updateLokasiTerakhirByRiwayatPerjalananTerakhirOrSelesaiOrEmergensi(req, res) } catch (error: any) { }
   });
 
-  // Get Penderita 5 Last Location
+  // Get Penderita Last Location
   app.get('/api/penderita/:penderita_username/riwayatperjalanan/lastlocation', async (req: Request, res: Response) => {
     try { await riwayatPerjalananController.getLokasiTerakhirByPenderitaUsername(req, res) } catch (error: any) { }
   });
@@ -293,7 +293,7 @@ function routes(app: Express){
 
   // AUTHORIZED ENDPOINT
   // Create Penderita Riwayat Perjalanan Through Keluarga Account
-  app.post('/api/keluarga/:keluarga_username/:penderita_username/riwayatperjalanan', async (req: Request, res: Response) => {
+  app.post('/api/penderita/:penderita_username/riwayatperjalanan', async (req: Request, res: Response) => {
     try { await riwayatPerjalananController.createNewRiwayatPerjalanan(req, res) } catch (error: any) { }
   });
 
