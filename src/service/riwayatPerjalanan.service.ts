@@ -50,7 +50,7 @@ class RiwayatPerjalananService {
     lokasi_awal_id: string;
     riwayat_perjalanan_id: string;
     alamat_awal: string;
-    longitude_awal: DoubleDataType;
+    longitude_awal: Float32Array;
     latitude_awal: Float32Array;
   }): Promise<LokasiAwal> {
     try {

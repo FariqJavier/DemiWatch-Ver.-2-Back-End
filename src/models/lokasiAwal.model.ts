@@ -6,7 +6,7 @@ class LokasiAwal extends Model {
   public lokasi_awal_id!: string;
   public riwayat_perjalanan_id!: string;
   public alamat_awal!: string;
-  public longitude_awal!: DoubleDataType;
+  public longitude_awal!: Float32Array;
   public latitude_awal!: Float32Array;
   public readonly timestamp!: Date;
 }
