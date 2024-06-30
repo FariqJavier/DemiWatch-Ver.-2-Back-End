@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, DoubleDataType } from 'sequelize';
 import sequelize from '../utils/config';
 import RiwayatPerjalanan from './riwayatPerjalanan.model';
 
@@ -6,7 +6,7 @@ class LokasiAwal extends Model {
   public lokasi_awal_id!: string;
   public riwayat_perjalanan_id!: string;
   public alamat_awal!: string;
-  public longitude_awal!: Float32Array;
+  public longitude_awal!: DoubleDataType;
   public latitude_awal!: Float32Array;
   public readonly timestamp!: Date;
 }
