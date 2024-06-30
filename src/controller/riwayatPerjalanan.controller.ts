@@ -26,8 +26,7 @@ class RiwayatPerjalananController {
         var lokasiTujuanUUID = uuidv4();
 
         const { 
-          penderita_username,
-          keluarga_username } = req.params;
+          penderita_username } = req.params;
 
         const { 
           alamat_awal,
@@ -39,7 +38,7 @@ class RiwayatPerjalananController {
           longitude_tujuan,
           latitude_tujuan } = req.body;
 
-        const hubungan = await this.hubunganPenderitaService.getHubunganPenderitaByKeluargaUsername(keluarga_username)
+        const hubungan = await this.hubunganPenderitaService.getHubunganPenderitaByPenderitaUsername(penderita_username)
         // Check if the penderita was found
         if (!hubungan) {
           throw new Error('Penderita Account has not been connected to Keluarga Account');
