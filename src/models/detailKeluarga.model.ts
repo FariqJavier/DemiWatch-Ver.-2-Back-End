@@ -31,7 +31,7 @@ DetailKeluarga.init({
   nomor_hp: {
     type: DataTypes.STRING,
     allowNull: false,
-  }
+  },
 }, {
   sequelize,
   tableName: 'detail_keluarga',
