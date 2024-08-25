@@ -54,7 +54,8 @@ class NotifikasiService {
         const notifikasiPromises = newData.map((Data) => {
             return Notifikasi.create(Data);
         });
-        const notifikasi = await Promise.all(notifikasiPromises)
+        const notifikasi = await Promise.all(notifikasiPromises);
+
         return notifikasi;
     } catch (error) {
       throw new Error(`Failed to create new Automated Emergensi: ${error}`);

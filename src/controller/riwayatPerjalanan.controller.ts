@@ -7,6 +7,24 @@ import RiwayatPerjalananService from '../service/riwayatPerjalanan.service';
 import EmergensiService from '../service/emergensi.service';
 import NotifikasiService from '../service/notifikasi.service';
 
+function sendPushNotification(fcmToken: any, title: any, message: any) {
+  const messagePayload = {
+    notification: {
+      title: title,
+      body: message
+    },
+    token: fcmToken
+  };
+
+  admin.messaging().send(messagePayload)
+    .then((response: Response) => {
+      console.log('Successfully sent message:', response);
+    })
+    .catch((error: any) => {
+      console.log('Error sending message:', error);
+    });
+}
+
 class RiwayatPerjalananController {
 
   constructor(
@@ -249,11 +267,17 @@ class RiwayatPerjalananController {
         })
         logger.info(`EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`);
 
+        const fcmToken = 'cqS6joMIQNaDNQbewC6y-x:APA91bGdzJxWOVeu_x5r_0OqOZTr_V5otOT-Qj5LfvLGZFmOO_6KoCDmOrmsnXhJT3kIFie_iK8ZHwJDi1aSTNnZXM6QYNENNnztS9oRObEUjq5Yskcpei_qReRgdIzta175PBO78OCi'
+        const title = 'PENDERITA TERSESAT'
+        const message = `EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`
+        
+        sendPushNotification(fcmToken, title, message);
+
         const notifikasi = await this.notifikasiService.createNewNotifikasi(penderita_username, {
           notifikasi_id: notifikasiUUID,
           emergensi_id: emergensiUUID,
-          tipe: 'PENDERITA TERSESAT',
-          pesan: `EMERGENCY! PENDERITA ${penderita_username} is TERSESAT`,
+          tipe: title,
+          pesan: message,
           timestamp: tersesatSOS.timestamp
         })
         logger.info(`NOTIFIKASI has Successfully created`);
