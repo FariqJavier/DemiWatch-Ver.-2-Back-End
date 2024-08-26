@@ -97,7 +97,7 @@ class RiwayatDetakJantungController {
           const title = 'ABNORMAL BPM PENDERITA'
           const message = `EMERGENCY! PENDERITA ${penderita_username} has ABNORMAL BPM`
         
-          sendPushNotification(fcmToken, 'Title', 'Message Body');
+          sendPushNotification(fcmToken, title, message);
 
           const notifikasi = await this.notifikasiService.createNewNotifikasi(penderita_username, {
             notifikasi_id: notifikasiUUID,
