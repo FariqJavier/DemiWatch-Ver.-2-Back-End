@@ -43,11 +43,11 @@ routes(app);
 app.listen(port, async () => {
   logger.info(`App is running at http://localhost:${port}`);
 
-  await connect();
-
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
+
+  await connect();
 
   routes(app);
 
