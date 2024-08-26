@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const fcmJson = process.env.FCM_JSON;
+const fcmJson = process.env.SECRET_JSON;
 if (!fcmJson) {
   throw new Error("SECRET_JSON is not defined in the environment variables");
 }
