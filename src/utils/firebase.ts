@@ -10,9 +10,14 @@ async function adminInit () {
 
   // const serviceAccount = require('../file/my-project-1-27717-1034408269f9.json')
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      // Add other configuration options if necessary
+    });
+  } else {
+    admin.app(); // Use the already initialized app
+  }
 
 }
 
