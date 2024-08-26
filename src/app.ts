@@ -8,8 +8,7 @@ import routes from "./routes";
 import config from "config"
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
-import serviceAccount from './utils/firebase';
-import admin from 'firebase-admin';
+import adminInit from "./utils/firebase";
 
 // Ensure NODE_CONFIG_DIR is set or default to './config'
 const configDir = process.env.NODE_CONFIG_DIR || './config';
@@ -43,9 +42,7 @@ routes(app);
 app.listen(port, async () => {
   logger.info(`App is running at http://localhost:${port}`);
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+  await adminInit();
 
   await connect();
 
