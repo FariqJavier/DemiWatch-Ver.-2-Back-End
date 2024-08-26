@@ -4,9 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import PenderitaService from '../service/penderita.service';
 import EmergensiService from '../service/emergensi.service';
 import NotifikasiService from '../service/notifikasi.service';
+import adminInit from '../utils/firebase';
 import admin from 'firebase-admin';
 
 function sendPushNotification(fcmToken: any, title: any, message: any) {
+  adminInit();
+  
   const messagePayload = {
     notification: {
       title: title,
