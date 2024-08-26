@@ -8,19 +8,8 @@ import routes from "./routes";
 import config from "config"
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
-
-const admin = require('firebase-admin');
-const fcmJson = process.env.SECRET_JSON;
-if (!fcmJson) {
-  throw new Error("SECRET_JSON is not defined in the environment variables");
-}
-const serviceAccount = JSON.parse(fcmJson);
-
-// const serviceAccount = require('../file/my-project-1-27717-1034408269f9.json')
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+import serviceAccount from './utils/firebase';
+import admin from 'firebase-admin';
 
 // Ensure NODE_CONFIG_DIR is set or default to './config'
 const configDir = process.env.NODE_CONFIG_DIR || './config';
@@ -55,6 +44,10 @@ app.listen(port, async () => {
   logger.info(`App is running at http://localhost:${port}`);
 
   await connect();
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
 
   routes(app);
 
