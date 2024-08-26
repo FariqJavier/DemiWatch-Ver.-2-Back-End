@@ -10,3 +10,5 @@ const serviceAccount = JSON.parse(fcmJson);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
+export default admin;

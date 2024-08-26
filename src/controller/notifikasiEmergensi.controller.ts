@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import PenderitaService from '../service/penderita.service';
 import EmergensiService from '../service/emergensi.service';
 import NotifikasiService from '../service/notifikasi.service';
+import admin from '../utils/firebase';
 
 function sendPushNotification(fcmToken: any, title: any, message: any) {
   const messagePayload = {
