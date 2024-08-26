@@ -6,9 +6,12 @@ import HubunganPenderitaService from '../service/hubunganPenderita.service';
 import RiwayatDetakJantungService from '../service/riwayatDetakJantung.service';
 import EmergensiService from '../service/emergensi.service';
 import NotifikasiService from '../service/notifikasi.service';
+import adminInit from '../utils/firebase';
 import admin from 'firebase-admin';
 
 function sendPushNotification(fcmToken: any, title: any, message: any) {
+  adminInit();
+
   const messagePayload = {
     notification: {
       title: title,
