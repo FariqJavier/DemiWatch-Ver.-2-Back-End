@@ -61,7 +61,7 @@ class NotifikasiEmergensiController {
         })
         logger.info(`EMERGENCY! PENDERITA ${penderita_username} is MENEKAN EMERGENSI BUTTON`);
 
-        const fcmToken = 'cqS6joMIQNaDNQbewC6y-x:APA91bGdzJxWOVeu_x5r_0OqOZTr_V5otOT-Qj5LfvLGZFmOO_6KoCDmOrmsnXhJT3kIFie_iK8ZHwJDi1aSTNnZXM6QYNENNnztS9oRObEUjq5Yskcpei_qReRgdIzta175PBO78OCi'
+        const fcmToken = 'eURGO9DRTZ6A4rhbZwGDGo:APA91bEVZgE14aUoc-h3l5CS_MmZBW0BLxEty2RpkAocyXZbJX554KaHIHYn-3wBz2tB9432F314n__bHaoRWXJg82fpH9Mv8MloLv1YdIZJ_yxo6WKwxs_4XDrDdKTFUQlm12pR5oOu'
         const title = 'TRIGGERED EMERGENSI BUTTON'
         const message = `EMERGENCY! PENDERITA ${penderita_username} is MENEKAN EMERGENSI BUTTON`
         
